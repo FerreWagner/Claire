@@ -12,15 +12,16 @@ class Base extends Controller
 {
     public function _initialize()
     {
-        $rules = ['img' => ['img', 'src']];
-        $img_d = QueryList::Query('http://www.shuaigetu.net/', $rules);
-        $img_d = $img_d->data;
-        $fake = [];
-        foreach ($img_d as $k => $v){
-            $url = 'http://www.shuaigetu.net'.$v['img'];
-            $this->getimg($url, 'sg');
-        }
-        die;
+        //test querylist
+//         $rules = ['img' => ['img', 'src']];
+//         $img_d = QueryList::Query('https://www.shuaigetu.net/', $rules);
+//         $img_d = $img_d->data;
+//         $fake = [];
+//         foreach ($img_d as $k => $v){
+//             $url = 'https://www.shuaigetu.net'.$v['img'];
+//             $this->getimg($url, 'sg');
+//         }
+//         die;
         
         parent::_initialize();
         
@@ -44,7 +45,28 @@ class Base extends Controller
         
     }
     
-    function getimg($url, $filepath) {
+    /**
+     * 邮件服务
+     */
+    public function mailServe($email, $content)
+    {
+        if (Mail::isMail() == config('mail.close')) return true;
+        
+//         $user_email = session('user_data')['email'];
+
+        $mail = new Mail();
+        $mail->getXml('admin');
+        $mail->init();
+        $mail->content($content);
+        $mail->replay($email);
+        
+        if (!$mail->send()){
+            $this->error('Mail Server Error.');
+        }
+    
+    }
+    
+    public function getimg($url, $filepath) {
         if ($url == '') {
             return false;
         }
@@ -68,35 +90,26 @@ class Base extends Controller
         return '/'.$filepath.'/'.$filename;
     }
     
-    function fetch_url_page_contents($url){
+    public function fetch_url_page_contents($url){
+//         $ch = curl_init();
+//         curl_setopt ($ch, CURLOPT_URL, $url);
+//         curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+//         curl_setopt ($ch, CURLOPT_TIMEOUT, 1000);
+//         $file_contents = curl_exec($ch);
+//         curl_close($ch);
+//         return $file_contents;
+        
+        //HTTPS crawl
         $ch = curl_init();
-        curl_setopt ($ch, CURLOPT_URL, $url);
-        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt ($ch, CURLOPT_TIMEOUT, 1000);
-        $file_contents = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_REFERER, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $result = curl_exec($ch);
         curl_close($ch);
-        return $file_contents;
-    }
-    
-    /**
-     * 邮件服务
-     */
-    public function mailServe($email, $content)
-    {
-        if (Mail::isMail() == config('mail.close')) return true;
-        
-//         $user_email = session('user_data')['email'];
-        
-        $mail = new Mail();
-        $mail->getXml('admin');
-        $mail->init();
-        $mail->content($content);
-        $mail->replay($email);
-        
-        if (!$mail->send()){
-            $this->error('Mail Server Error.');
-        }
-    
+        return $result;
     }
 
     
