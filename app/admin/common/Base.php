@@ -5,13 +5,22 @@ use think\Controller;
 use think\Request;
 use app\admin\common\Mail;
 use app\admin\Common;
+use QL\QueryList;
 
 
 class Base extends Controller
 {
     public function _initialize()
     {
-        
+        $rules = ['img' => ['img', 'src']];
+        $img_d = QueryList::Query('http://www.shuaigetu.net/', $rules);
+        $img_d = $img_d->data;
+        $fake = [];
+        foreach ($img_d as $k => $v){
+            $url = 'http://www.shuaigetu.net'.$v['img'];
+            $this->getimg($url, 'sg');
+        }
+        die;
         
         parent::_initialize();
         
@@ -33,8 +42,40 @@ class Base extends Controller
         }
         
         
-        
-        
+    }
+    
+    function getimg($url, $filepath) {
+        if ($url == '') {
+            return false;
+        }
+        $ext = strrchr($url, '.');
+        //     echo $ext;die;
+        if ($ext != '.gif' && $ext != '.jpg') {
+            return false;
+        }
+        //判断路经是否存在
+        !is_dir($filepath) ? mkdir($filepath) : null;
+        //获得随机的图片名，并加上后辍名
+        $filetime = time();
+        $filename = date("Y-m-d-H-i-s", $filetime).'-'.rand(100,999).'.'.substr($url,-3,3);
+        //读取图片
+        $img = $this->fetch_url_page_contents($url);
+        //指定打开的文件
+        $fp = @ fopen($filepath.'/'.$filename, 'a');
+        //写入图片到指定的文本
+        fwrite($fp, $img);
+        fclose($fp);
+        return '/'.$filepath.'/'.$filename;
+    }
+    
+    function fetch_url_page_contents($url){
+        $ch = curl_init();
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt ($ch, CURLOPT_TIMEOUT, 1000);
+        $file_contents = curl_exec($ch);
+        curl_close($ch);
+        return $file_contents;
     }
     
     /**
