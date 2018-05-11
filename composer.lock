@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c83fd415b3e8e0648746835e4ed1bde3",
+    "content-hash": "0535338a5bae6e5d81453cbc2de17d3e",
     "packages": [
         {
             "name": "jaeger/phpquery-single",

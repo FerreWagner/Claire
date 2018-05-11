@@ -11,8 +11,10 @@ class Base extends Controller
 {
     public function _initialize()
     {
+        
+        
         parent::_initialize();
-//         halt(phpinfo());   
+        
         //detail login
         $request = Request::instance();
         $action  = $request->controller().'/'.$request->action();
