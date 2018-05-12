@@ -22,7 +22,10 @@ class Base extends Controller
 //             $this->getimg($url, 'sg');
 //         }
 //         die;
-        
+        $a = 'https://www.baidu.com';
+        if (is_numeric(strpos($a, 'https'))){
+            halt(1);
+        }
         parent::_initialize();
         
         //detail login
