@@ -138,6 +138,11 @@ class Article extends Base
         }
     }
 
+    /**
+     * 
+     * doCrawl表单处理
+     * @return string
+     */
     public function doCrawl()
     {
         if (\request()->isPost()){
