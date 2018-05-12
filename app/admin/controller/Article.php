@@ -86,48 +86,6 @@ class Article extends Base
         $this->view->assign('cate', $cate);
         return $this->view->fetch('article-add');
     }
-    
-        //七牛test
-//     public function upload(Request $request)
-//     {
-        
-//         if ($request->isPost()){
-            
-//             $file = $request->file('thumb');
-//             //本地路径
-//             $filePath = $file->getRealPath();
-//             //获取后缀
-//             $ext = pathinfo($file->getInfo('name'), PATHINFO_EXTENSION);
-//             //上传到七牛后保存的文件名(加盐)
-//             $key = config('salt.password_salt').substr(md5($file->getRealPath()) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
-            
-//             $ak = config('qiniu.ak');
-//             $sk = config('qiniu.sk');
-            
-//             //构建鉴权对象
-//             $auth = new Auth($ak, $sk);
-//             //要上传的空间
-//             $bucket = config('qiniu.bucket');
-//             $domain = config('qiniu.domain');
-//             $token = $auth->uploadToken($bucket);
-            
-//             //初始化uploadmanager对象并进行文件的上传
-//             $uploadMgr = new UploadManager();
-            
-//             //调用uploadmanager的putfile方法进行文件的上传
-//             list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
-            
-//             if ($err !== null){
-//                 return ['err' => 1, 'msg' => $err, 'data' => ''];
-//             }else {
-//                 //返回图片的完整URL
-//                 return ['err' => 0, 'msg' => '上传完成', 'data' => ($domain.'/'.$ret['key'])];
-//             }
-            
-//         }
-        
-//     }
-
 
     /**
      * 显示编辑资源表单页.
@@ -179,25 +137,20 @@ class Article extends Base
             $this->error('删除文章失败！');
         }
     }
-    
+
     /**
-     * 邮件服务
+     * 
+     * doCrawl表单处理
+     * @return string
      */
-//     public function mailServe()
-//     {
-//         if (Mail::isMail() == config('mail.close')) return true;
-        
-//         $user_email = session('user_data')['email'];
-// //         halt($user_email);
-//         $mail = new Mail();
-//         $mail->getXml('admin');
-//         $mail->recive = $user_email;
-//         $mail->init();
-//         $mail->content();
-//         $mail->replay();
-//         if (!$mail->send()){
-//             $this->error('Mail Server Error.');
-//         }
-        
-//     }
+    public function doCrawl()
+    {
+        if (\request()->isPost()){
+            echo 1;die;
+        }
+        $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
+        return $this->view->fetch('article-do', ['cate' => $cate]);
+    }
+
+
 }
