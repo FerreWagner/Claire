@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use QL\QueryList;
 use think\Request;
 use app\admin\common\Base;
 use think\Loader;
@@ -149,7 +150,7 @@ class Article extends Base
         if ($request->isPost()){
             $data = $request->param();
             //         $rules = ['img' => ['img', 'src']];
-            
+            QueryList::html()->rules()->query()->getData();
             halt($data);
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
