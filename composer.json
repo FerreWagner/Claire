@@ -10,7 +10,7 @@
 	],
   "require" : {
     "php" : ">=5.4.0",
-    "jaeger/querylist": "^3.2"
+    "jaeger/querylist": "^4.0"
   },
   "keywords" : [ "FerreWagner", "alexa-admin", "admin system"],
   "type" : "project"
