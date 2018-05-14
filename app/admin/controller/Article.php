@@ -144,10 +144,13 @@ class Article extends Base
      * doCrawl表单处理
      * @return string
      */
-    public function doCrawl()
+    public function doCrawl(Request $request)
     {
-        if (\request()->isPost()){
-            echo 1;die;
+        if ($request->isPost()){
+            $data = $request->param();
+            //         $rules = ['img' => ['img', 'src']];
+            
+            halt($data);
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do', ['cate' => $cate]);
