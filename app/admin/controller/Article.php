@@ -8,6 +8,7 @@ use app\admin\common\Base;
 use think\Loader;
 use app\admin\model\Article as ArticleModel;
 use think\Validate;
+use function GuzzleHttp\Promise\all;
 
 class Article extends Base
 {
@@ -148,13 +149,135 @@ class Article extends Base
     public function doCrawl(Request $request)
     {
         if ($request->isPost()){
-            $data = $request->param();
-            //         $rules = ['img' => ['img', 'src']];
-            QueryList::html()->rules()->query()->getData();
-            halt($data);
+            $form = $request->param();
+            
+            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host'];
+            
+            //获取html
+//             $html   = file_get_contents($form['url']);
+            $html   = $this->fetch_url_page_contents($form['url']);
+            $source = QueryList::html($html);
+            
+            //解析首页图
+            $index_rule = [
+                'img' => ['img', 'src'],
+            ];
+            $index_img  = $source->rules($index_rule)->query();
+            $index_data = $index_img->getData();    //首页图
+            
+            
+            $re = $this->getPageData($form['url'], $html, $index_rule, ['url' => ['a', 'href']], $baseurl);
+            halt($re);
+            
+            //解析html层数
+            $deep = 0;
+            $_html = $html;
+            while ($deep < $form['deep']){
+                //TODO 迭代url和get图片流
+                $_rules = [
+                    
+                ];
+                $this->getAllUrl($form['url'], $_html, $_rules);
+                
+//                 if (strpos($form['url'], $needle))
+                
+                $_html = '';
+                $deep ++;
+            }
+            
+            die;
+            
+            
+            
+            
+            //采集某页面所有的图片
+            $_src = QueryList::get($form['url'])->find('img')->attrs('src');
+            //打印结果
+            halt($_src->all());
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do', ['cate' => $cate]);
+    }
+    
+    /**
+     * 得到img和url
+     * Tips：目前硬规定为：img和url的rule的数组键必须为img和url
+     * @param unknown $url    需要抓取的url
+     * @param unknown $html   html实体
+     * @param unknown $rule1  img rule
+     * @param string $rule2   url rule
+     * @param string $baseurl 站点原始url
+     * @return boolean|Collection[]
+     */
+    public function getPageData($url, $html, $img_rule, $url_rule = '', $baseurl = '')
+    {
+        if (empty($url)) return false;
+        
+        //采集并处理为完整url的img
+        $re1 = QueryList::html($html)->rules($img_rule)->query()->getData(function($item) use ($url, $baseurl){
+            if (!is_numeric(strpos($item['img'], 'http'))){
+                return $baseurl.$item['img'];
+            }else {
+                return $item['img'];
+            }
+        }); //得到img
+        
+        //筛选图片
+        $re_img = $re1->all();
+        array_walk($re_img, function(&$value, $key, $str){
+            if (!is_numeric(strpos($value, $str))){
+                $value = false;
+            }
+        }, $this->getHost($baseurl));    //去除非host的img
+        $re_img = $this->removeRepeatEmpty($re_img);
+        
+        
+        //处理并采集为完整的url
+        if (!empty($url_rule)){
+            $re2 = QueryList::html($html)->rules($url_rule)->query()->getData(function($item) use ($url, $baseurl){
+                if (!is_numeric(strpos($item['url'], 'http'))){
+                    return $baseurl.$item['url'];
+                }else {
+                    return $item['url'];
+                }
+            }); //得到url
+            
+            $re_url = $re2->all();
+            array_walk($re_url, function(&$value, $key, $str){
+                if (!is_numeric(strpos($value, $str))){
+                    $value = false;
+                }
+            }, $this->getHost($baseurl));    //去除非host的url
+            
+            $re_url = $this->removeRepeatEmpty($re_url);
+        }
+
+        if (!isset($re_url)) $re_url = [];
+        
+        return [$re_img, $re_url];
+       
+        
+    }
+    
+    
+    /**
+     * 得到最后的host主机名
+     * @param unknown $url
+     */
+    public function getHost($url)
+    {
+        $arr = array_slice(explode('.', parse_url($url)['host']),-2,1);
+        return $arr[0];
+    }
+    
+    /**
+     * 数组去空和去重
+     * @param unknown $arr
+     */
+    public function removeRepeatEmpty($arr)
+    {
+        $not_null = array_filter($arr);
+        return array_unique($not_null);
     }
 
 
