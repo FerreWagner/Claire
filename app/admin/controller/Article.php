@@ -149,45 +149,42 @@ class Article extends Base
     public function doCrawl(Request $request)
     {
         if ($request->isPost()){
+            
             $form = $request->param();
+            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
             
-            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host'];
-            
-            //获取html
+            //获取html,已用CURL方法替换
 //             $html   = file_get_contents($form['url']);
             $html   = $this->fetch_url_page_contents($form['url']);
             $source = QueryList::html($html);
             
             //解析首页图
-            $index_rule = [
-                'img' => ['img', 'src'],
-            ];
-            $index_img  = $source->rules($index_rule)->query();
+            $img_rule   = ['img' => ['img', 'src'],];
+            $url_rule   = ['url' => ['a', 'href'],];
+            $index_img  = $source->rules($img_rule)->query();
             $index_data = $index_img->getData();    //首页图
             
-            
-            $re = $this->getPageData($form['url'], $html, $index_rule, ['url' => ['a', 'href']], $baseurl);
-            halt($re);
+//             $re = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
+//             halt($re);
             
             //解析html层数
             $deep = 0;
             $_html = $html;
             while ($deep < $form['deep']){
-                //TODO 迭代url和get图片流
+                die;
                 $_rules = [
                     
                 ];
-                $this->getAllUrl($form['url'], $_html, $_rules);
                 
-//                 if (strpos($form['url'], $needle))
+                //迭代url和get图片流
+                $re = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
+                //TODO re为//返回url并继续处理
                 
                 $_html = '';
                 $deep ++;
             }
             
             die;
-            
-            
             
             
             //采集某页面所有的图片
@@ -255,8 +252,6 @@ class Article extends Base
         if (!isset($re_url)) $re_url = [];
         
         return [$re_img, $re_url];
-       
-        
     }
     
     
