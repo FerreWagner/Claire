@@ -2,10 +2,7 @@
 
 namespace app\admin\controller;
 
-<<<<<<< HEAD
-=======
 use QL\QueryList;
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
 use think\Request;
 use app\admin\common\Base;
 use think\Loader;
@@ -142,14 +139,9 @@ class Article extends Base
         }
     }
 
-<<<<<<< HEAD
-    /**
-     * 
-=======
     
     /**
      *
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
      * doCrawl表单处理
      * @return string
      */
@@ -158,11 +150,7 @@ class Article extends Base
         if ($request->isPost()){
             $data = $request->param();
             //         $rules = ['img' => ['img', 'src']];
-<<<<<<< HEAD
-            
-=======
             QueryList::html()->rules()->query()->getData();
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
             halt($data);
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();

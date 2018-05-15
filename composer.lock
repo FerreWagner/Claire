@@ -4,11 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "0c420ec90a28233b2752d739f0ea526e",
-    "packages": [
-        {
-=======
     "content-hash": "be113a42b9e9c2fb9e7426b58279d90a",
     "packages": [
         {
@@ -320,7 +315,6 @@
             "time": "2017-12-15T03:05:32+00:00"
         },
         {
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
             "name": "phpmailer/phpmailer",
             "version": "v6.0.2",
             "source": {
@@ -386,8 +380,6 @@
             "time": "2017-11-30T17:20:24+00:00"
         },
         {
-<<<<<<< HEAD
-=======
             "name": "psr/http-message",
             "version": "1.0.1",
             "source": {
@@ -438,7 +430,6 @@
             "time": "2016-08-06T14:39:51+00:00"
         },
         {
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
             "name": "qiniu/php-sdk",
             "version": "v7.2.2",
             "source": {
@@ -490,8 +481,6 @@
             "time": "2017-11-07T06:12:11+00:00"
         },
         {
-<<<<<<< HEAD
-=======
             "name": "symfony/polyfill-mbstring",
             "version": "v1.8.0",
             "source": {
@@ -725,7 +714,6 @@
             "time": "2018-05-08T15:48:57+00:00"
         },
         {
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
             "name": "topthink/framework",
             "version": "v5.0.14",
             "source": {

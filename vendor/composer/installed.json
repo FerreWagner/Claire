@@ -214,8 +214,6 @@
             "sdk",
             "storage"
         ]
-<<<<<<< HEAD
-=======
     },
     {
         "name": "guzzlehttp/promises",
@@ -829,6 +827,5 @@
             "phpQuery",
             "spider"
         ]
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
     }
 ]

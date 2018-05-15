@@ -6,8 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-<<<<<<< HEAD
-=======
     'Callback' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
     'CallbackBody' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
     'CallbackParam' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
@@ -21,5 +19,4 @@ return array(
     'phpQueryEvents' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
     'phpQueryObject' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
     'phpQueryPlugins' => $vendorDir . '/jaeger/phpquery-single/phpQuery.php',
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
 );

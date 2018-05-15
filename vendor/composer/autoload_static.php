@@ -7,8 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
 {
     public static $files = array (
-<<<<<<< HEAD
-=======
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -17,7 +15,6 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'fe62ba7e10580d903cc46d808b5961a4' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/helpers.php',
         'caf31cc6ec7cf2241cb6f12c226c3846' => __DIR__ . '/..' . '/tightenco/collect/src/Collect/Support/alias.php',
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
         '841780ea2e1d6545ea3a253239d59c05' => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu/functions.php',
     );
 
@@ -27,16 +24,6 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
             'think\\composer\\' => 15,
             'think\\' => 6,
         ),
-<<<<<<< HEAD
-        'Q' => 
-        array (
-            'Qiniu\\' => 6,
-        ),
-        'P' => 
-        array (
-            'PHPMailer\\PHPMailer\\' => 20,
-        ),
-=======
         'T' => 
         array (
             'Tightenco\\Collect\\' => 18,
@@ -67,7 +54,6 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
     );
 
     public static $prefixDirsPsr4 = array (
@@ -79,8 +65,6 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
         array (
             0 => __DIR__ . '/../..' . '/thinkphp/library/think',
         ),
-<<<<<<< HEAD
-=======
         'Tightenco\\Collect\\' => 
         array (
             0 => __DIR__ . '/..' . '/tightenco/collect/src/Collect',
@@ -97,13 +81,10 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
         'Qiniu\\' => 
         array (
             0 => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu',
         ),
-<<<<<<< HEAD
-=======
         'QL\\' => 
         array (
             0 => __DIR__ . '/..' . '/jaeger/querylist/src',
@@ -112,13 +93,10 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
         'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-<<<<<<< HEAD
-=======
         'Jaeger\\' => 
         array (
             0 => __DIR__ . '/..' . '/jaeger/g-http/src',
@@ -151,7 +129,6 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
         'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
         'phpQueryPlugins' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -159,10 +136,7 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit28e2e705673cb243a32176ec44cda99e::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit28e2e705673cb243a32176ec44cda99e::$prefixDirsPsr4;
-<<<<<<< HEAD
-=======
             $loader->classMap = ComposerStaticInit28e2e705673cb243a32176ec44cda99e::$classMap;
->>>>>>> 74199db95f8f333e8b727d977aa194620356c6c7
 
         }, null, ClassLoader::class);
     }
