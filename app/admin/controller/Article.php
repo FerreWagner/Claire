@@ -164,33 +164,40 @@ class Article extends Base
             $index_img  = $source->rules($img_rule)->query();
             $index_data = $index_img->getData();    //首页图
             
-//             $re = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
-//             halt($re);
-            
             //解析html层数
-            $deep = 0;
-            $_html = $html;
-            while ($deep < $form['deep']){
-                die;
-                $_rules = [
-                    
-                ];
+            $total_img = $total_url = $now_url = [];
+            $deep = 1;
+            //迭代url和get图片流
+            while ($deep <= $form['deep']){
+                //第一次循环
+                if ($deep == 1){
+                    $result = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
+                    $total_img = array_merge($result[0], $total_img);
+                    $total_url = $result[1];
+                }else {
+                    if (!empty($now_url)){
+                        $total_url = $now_url;
+                        $now_url   = [];
+                    }
+                    foreach ($total_url as $__url){
+                        $_html   = $this->fetch_url_page_contents($__url);
+                        $result  = $this->getPageData($__url, $_html, $img_rule, $url_rule, $baseurl);
+                        $total_img = array_merge($result[0], $total_img);
+                        $now_url = array_merge($result[1], $now_url);
+                        $now_url = array_unique($now_url);
+//                         halt($total_url);
+                    }
+                }
                 
-                //迭代url和get图片流
-                $re = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
                 //TODO re为//返回url并继续处理
-                
-                $_html = '';
                 $deep ++;
             }
-            
-            die;
-            
-            
+            $total_img = array_unique($total_img);
+            halt($total_img);
             //采集某页面所有的图片
             $_src = QueryList::get($form['url'])->find('img')->attrs('src');
             //打印结果
-            halt($_src->all());
+            $_src->all();
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do', ['cate' => $cate]);
