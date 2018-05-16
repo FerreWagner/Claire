@@ -169,7 +169,7 @@ class Article extends Base
             $deep = 1;
             //迭代url和get图片流
             while ($deep <= $form['deep']){
-                //第一次循环
+                //第一次循环 re为//返回url并继续处理
                 if ($deep == 1){
                     $result = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
                     $total_img = array_merge($result[0], $total_img);
@@ -183,16 +183,23 @@ class Article extends Base
                         $_html   = $this->fetch_url_page_contents($__url);
                         $result  = $this->getPageData($__url, $_html, $img_rule, $url_rule, $baseurl);
                         $total_img = array_merge($result[0], $total_img);
-                        $now_url = array_merge($result[1], $now_url);
+                        $now_url = array_merge($result[1]);
                         $now_url = array_unique($now_url);
 //                         halt($total_url);
                     }
                 }
                 
-                //TODO re为//返回url并继续处理
                 $deep ++;
             }
+            
             $total_img = array_unique($total_img);
+//             $total_index = array_map(function($value){
+//                 return ['asd' => $value];
+//             }, $total_img);
+//             array_walk($total_img, function(&$value, &$key){
+//                 $value = ['asd' => $value];
+//             });
+            
             halt($total_img);
             //采集某页面所有的图片
             $_src = QueryList::get($form['url'])->find('img')->attrs('src');
@@ -230,7 +237,7 @@ class Article extends Base
         $re_img = $re1->all();
         array_walk($re_img, function(&$value, $key, $str){
             if (!is_numeric(strpos($value, $str))){
-                $value = false;
+                $value = '';
             }
         }, $this->getHost($baseurl));    //去除非host的img
         $re_img = $this->removeRepeatEmpty($re_img);
@@ -249,7 +256,7 @@ class Article extends Base
             $re_url = $re2->all();
             array_walk($re_url, function(&$value, $key, $str){
                 if (!is_numeric(strpos($value, $str))){
-                    $value = false;
+                    $value = '';
                 }
             }, $this->getHost($baseurl));    //去除非host的url
             
