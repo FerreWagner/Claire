@@ -149,7 +149,6 @@ class Article extends Base
     public function doCrawl(Request $request)
     {
         if ($request->isPost()){
-            
             $form = $request->param();
             $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
             
@@ -185,7 +184,6 @@ class Article extends Base
                         $total_img = array_merge($result[0], $total_img);
                         $now_url = array_merge($result[1]);
                         $now_url = array_unique($now_url);
-//                         halt($total_url);
                     }
                 }
                 
@@ -193,18 +191,24 @@ class Article extends Base
             }
             
             $total_img = array_unique($total_img);
-//             $total_index = array_map(function($value){
-//                 return ['asd' => $value];
-//             }, $total_img);
-//             array_walk($total_img, function(&$value, &$key){
-//                 $value = ['asd' => $value];
-//             });
+            $sql_data = [];
+            foreach ($total_img as $_value){
+                $see = random_int(60, 4000);
+                $sql_data[] = [
+                    'cate'   => $form['cate'],
+                    'author' => 'internet',
+                    'order'  => $form['order'],
+                    'see'    => $see,
+                    'pic'    => $_value,
+                    'time'   => time(),
+                ];
+            }
             
-            halt($total_img);
+            db('article')->insertAll($sql_data);
             //采集某页面所有的图片
-            $_src = QueryList::get($form['url'])->find('img')->attrs('src');
-            //打印结果
-            $_src->all();
+//             $_src = QueryList::get($form['url'])->find('img')->attrs('src');
+//             //打印结果
+//             $_src->all();
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do', ['cate' => $cate]);
