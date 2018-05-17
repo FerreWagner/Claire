@@ -155,13 +155,13 @@ class Article extends Base
             //获取html,已用CURL方法替换
 //             $html   = file_get_contents($form['url']);
             $html   = $this->fetch_url_page_contents($form['url']);
-            $source = QueryList::html($html);
+//            $source = QueryList::html($html);
             
             //解析首页图
             $img_rule   = ['img' => ['img', 'src'],];
             $url_rule   = ['url' => ['a', 'href'],];
-            $index_img  = $source->rules($img_rule)->query();
-            $index_data = $index_img->getData();    //首页图
+//            $index_img  = $source->rules($img_rule)->query();
+//            $index_data = $index_img->getData();    //首页图
             
             //解析html层数
             $total_img = $total_url = $now_url = [];
@@ -210,6 +210,7 @@ class Article extends Base
                     'pic'    => $_value,
                     'time'   => time(),
                 ];
+
             }
             
             if (is_numeric(db('article')->insertAll($sql_data))){
@@ -224,6 +225,29 @@ class Article extends Base
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do', ['cate' => $cate]);
+    }
+
+    public function singlePage(Request $request)
+    {
+        if ($request->isPost()){
+            $form = $request->param();
+            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
+
+            $html   = $this->fetch_url_page_contents($form['url']);
+
+            //制定规则
+            $img_rule   = ['img' => ['img', 'src'],];
+            $url_rule   = ['url' => ['a', 'href'],];
+
+            $total_img = [];
+            //首页不规则规则制定：UU美图：https://www.uumnt.cc/
+            if (is_numeric(strpos($form['url'], 'uumnt'))){
+                $total_img[] = QueryList::get($form['url'])->find('img')->attrs('src');
+            }
+            halt($total_img);
+        }
+        $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
+        return $this->view->fetch('article-do-single', ['cate' => $cate]);
     }
     
     /**
@@ -283,8 +307,8 @@ class Article extends Base
         
         return [$re_img, $re_url];
     }
-    
-    
+
+
     /**
      * 得到最后的host主机名
      * @param unknown $url
