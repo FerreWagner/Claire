@@ -191,9 +191,17 @@ class Article extends Base
             }
             
             $total_img = array_unique($total_img);
+            //最大插入限制
+            if (count($total_img) > $form['number']){
+                $total_img = array_slice($total_img, $form['number']);
+            }
+            
+            $in_img = db('article')->where('pic', 'in', $total_img)->column('pic');
+            $filter_img = array_diff($total_img, $in_img);
+            
             $sql_data = [];
-            foreach ($total_img as $_value){
-                $see = random_int(60, 4000);
+            foreach ($filter_img as $_value){
+                $see = random_int(60, 2000);
                 $sql_data[] = [
                     'cate'   => $form['cate'],
                     'author' => 'internet',
@@ -205,6 +213,7 @@ class Article extends Base
             }
             
             db('article')->insertAll($sql_data);
+            
             //采集某页面所有的图片
 //             $_src = QueryList::get($form['url'])->find('img')->attrs('src');
 //             //打印结果
