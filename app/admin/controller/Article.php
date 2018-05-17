@@ -231,20 +231,22 @@ class Article extends Base
     {
         if ($request->isPost()){
             $form = $request->param();
-            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
+//            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
 
             $html   = $this->fetch_url_page_contents($form['url']);
 
             //制定规则
-            $img_rule   = ['img' => ['img', 'src'],];
-            $url_rule   = ['url' => ['a', 'href'],];
+//            $img_rule   = ['img' => ['img', 'src'],];
+//            $url_rule   = ['url' => ['a', 'href'],];
 
             $total_img = [];
             //首页不规则规则制定：UU美图：https://www.uumnt.cc/
             if (is_numeric(strpos($form['url'], 'uumnt'))){
-                $total_img[] = QueryList::get($form['url'])->find('img')->attrs('src');
+                $result = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.imgac>a')->query()->getData();
+                $total_img = $result->all();
+                halt($total_img);
             }
-            halt($total_img);
+
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do-single', ['cate' => $cate]);
