@@ -186,23 +186,23 @@ class Article extends Base
                         $now_url = array_unique($now_url);
                     }
                 }
-                
                 $deep ++;
             }
             
             $total_img = array_unique($total_img);
+            //库数据去重
+            $in_img     = db('article')->where('pic', 'in', $total_img)->column('pic');
+            $filter_img = array_diff($total_img, $in_img);
             //最大插入限制
-            if (count($total_img) > $form['number']){
-                $total_img = array_slice($total_img, $form['number']);
+            if (count($filter_img) > $form['number']){
+                $filter_img = array_slice($filter_img, $form['number']);
             }
             
-            $in_img = db('article')->where('pic', 'in', $total_img)->column('pic');
-            $filter_img = array_diff($total_img, $in_img);
-            
+            //构造数据
             $sql_data = [];
             foreach ($filter_img as $_value){
                 $see = random_int(60, 2000);
-                $sql_data[] = [
+                $sql_data[]  = [
                     'cate'   => $form['cate'],
                     'author' => 'internet',
                     'order'  => $form['order'],
@@ -212,8 +212,11 @@ class Article extends Base
                 ];
             }
             
-            db('article')->insertAll($sql_data);
-            
+            if (is_numeric(db('article')->insertAll($sql_data))){
+                $this->success('爬取成功');
+            }else {
+                $this->error('爬取失败');
+            }
             //采集某页面所有的图片
 //             $_src = QueryList::get($form['url'])->find('img')->attrs('src');
 //             //打印结果
