@@ -8,6 +8,7 @@ use app\admin\common\Base;
 use think\Loader;
 use app\admin\model\Article as ArticleModel;
 use think\Validate;
+use function GuzzleHttp\Promise\all;
 
 class Article extends Base
 {
@@ -148,13 +149,160 @@ class Article extends Base
     public function doCrawl(Request $request)
     {
         if ($request->isPost()){
-            $data = $request->param();
-            //         $rules = ['img' => ['img', 'src']];
-            QueryList::html()->rules()->query()->getData();
-            halt($data);
+            $form = $request->param();
+            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
+            
+            //获取html,已用CURL方法替换
+//             $html   = file_get_contents($form['url']);
+            $html   = $this->fetch_url_page_contents($form['url']);
+            $source = QueryList::html($html);
+            
+            //解析首页图
+            $img_rule   = ['img' => ['img', 'src'],];
+            $url_rule   = ['url' => ['a', 'href'],];
+            $index_img  = $source->rules($img_rule)->query();
+            $index_data = $index_img->getData();    //首页图
+            
+            //解析html层数
+            $total_img = $total_url = $now_url = [];
+            $deep = 1;
+            //迭代url和get图片流
+            while ($deep <= $form['deep']){
+                //第一次循环 re为//返回url并继续处理
+                if ($deep == 1){
+                    $result = $this->getPageData($form['url'], $html, $img_rule, $url_rule, $baseurl);
+                    $total_img = array_merge($result[0], $total_img);
+                    $total_url = $result[1];
+                }else {
+                    if (!empty($now_url)){
+                        $total_url = $now_url;
+                        $now_url   = [];
+                    }
+                    foreach ($total_url as $__url){
+                        $_html   = $this->fetch_url_page_contents($__url);
+                        $result  = $this->getPageData($__url, $_html, $img_rule, $url_rule, $baseurl);
+                        $total_img = array_merge($result[0], $total_img);
+                        $now_url = array_merge($result[1]);
+                        $now_url = array_unique($now_url);
+                    }
+                }
+                $deep ++;
+            }
+            
+            $total_img = array_unique($total_img);
+            //库数据去重
+            $in_img     = db('article')->where('pic', 'in', $total_img)->column('pic');
+            $filter_img = array_diff($total_img, $in_img);
+            //最大插入限制
+            if (count($filter_img) > $form['number']){
+                $filter_img = array_slice($filter_img, $form['number']);
+            }
+            
+            //构造数据
+            $sql_data = [];
+            foreach ($filter_img as $_value){
+                $see = random_int(60, 2000);
+                $sql_data[]  = [
+                    'cate'   => $form['cate'],
+                    'author' => 'internet',
+                    'order'  => $form['order'],
+                    'see'    => $see,
+                    'pic'    => $_value,
+                    'time'   => time(),
+                ];
+            }
+            
+            if (is_numeric(db('article')->insertAll($sql_data))){
+                $this->success('爬取成功');
+            }else {
+                $this->error('爬取失败');
+            }
+            //采集某页面所有的图片
+//             $_src = QueryList::get($form['url'])->find('img')->attrs('src');
+//             //打印结果
+//             $_src->all();
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do', ['cate' => $cate]);
+    }
+    
+    /**
+     * 得到img和url
+     * Tips：目前硬规定为：img和url的rule的数组键必须为img和url
+     * @param unknown $url    需要抓取的url
+     * @param unknown $html   html实体
+     * @param unknown $rule1  img rule
+     * @param string $rule2   url rule
+     * @param string $baseurl 站点原始url
+     * @return boolean|Collection[]
+     */
+    public function getPageData($url, $html, $img_rule, $url_rule = '', $baseurl = '')
+    {
+        if (empty($url)) return false;
+        
+        //采集并处理为完整url的img
+        $re1 = QueryList::html($html)->rules($img_rule)->query()->getData(function($item) use ($url, $baseurl){
+            if (!is_numeric(strpos($item['img'], 'http'))){
+                return $baseurl.$item['img'];
+            }else {
+                return $item['img'];
+            }
+        }); //得到img
+        
+        //筛选图片
+        $re_img = $re1->all();
+        array_walk($re_img, function(&$value, $key, $str){
+            if (!is_numeric(strpos($value, $str))){
+                $value = '';
+            }
+        }, $this->getHost($baseurl));    //去除非host的img
+        $re_img = $this->removeRepeatEmpty($re_img);
+        
+        
+        //处理并采集为完整的url
+        if (!empty($url_rule)){
+            $re2 = QueryList::html($html)->rules($url_rule)->query()->getData(function($item) use ($url, $baseurl){
+                if (!is_numeric(strpos($item['url'], 'http'))){
+                    return $baseurl.$item['url'];
+                }else {
+                    return $item['url'];
+                }
+            }); //得到url
+            
+            $re_url = $re2->all();
+            array_walk($re_url, function(&$value, $key, $str){
+                if (!is_numeric(strpos($value, $str))){
+                    $value = '';
+                }
+            }, $this->getHost($baseurl));    //去除非host的url
+            
+            $re_url = $this->removeRepeatEmpty($re_url);
+        }
+
+        if (!isset($re_url)) $re_url = [];
+        
+        return [$re_img, $re_url];
+    }
+    
+    
+    /**
+     * 得到最后的host主机名
+     * @param unknown $url
+     */
+    public function getHost($url)
+    {
+        $arr = array_slice(explode('.', parse_url($url)['host']),-2,1);
+        return $arr[0];
+    }
+    
+    /**
+     * 数组去空和去重
+     * @param unknown $arr
+     */
+    public function removeRepeatEmpty($arr)
+    {
+        $not_null = array_filter($arr);
+        return array_unique($not_null);
     }
 
 
