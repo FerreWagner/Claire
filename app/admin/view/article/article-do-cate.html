@@ -5,13 +5,21 @@
 
 <body>
         <div class="x-body">
-            <form class="layui-form layui-form-pane" id="aform" action="{:url('admin/article/doCrawl')}" method="post">
+            <form class="layui-form layui-form-pane" id="aform" action="{:url('admin/article/cateCrawl')}" method="post">
                 <div class="layui-form-item">
-                    <label for="url" class="layui-form-label">
-                        采集地址
+                    <label for="first_url" class="layui-form-label">
+                        采集首页
                     </label>
                     <div class="layui-input-block">
-                        <input type="text" name="url" value="" autocomplete="off" class="layui-input">
+                        <input type="text" name="first_url" value="" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="last_url" class="layui-form-label">
+                        采集末页
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="text" name="last_url" value="" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 <!--                 <div class="layui-form-item">
@@ -24,14 +32,14 @@
                     </div>
                 </div> -->
 
-                <div class="layui-form-item">
-                    <label for="deep" class="layui-form-label">
-                        <span class="x-red">*</span>采集深度
+                <!--<div class="layui-form-item">
+                    <label for="cla" class="layui-form-label">
+                        <span class="x-red">*</span>图片类
                     </label>
                     <div class="layui-input-inline">
-                        <input type="number" id="deep" name="deep" required="" lay-verify="required" autocomplete="off" value="2" class="layui-input">
+                        <input type="string" id="cla" name="cla" required="" lay-verify="required" autocomplete="off" value="" class="layui-input">
                     </div>
-                </div>
+                </div>-->
 
                 <div class="layui-form-item">
                     <label for="order" class="layui-form-label">
@@ -42,14 +50,6 @@
                     </div>
                 </div>
                 
-                <!-- <div class="layui-form-item">
-                    <label for="number" class="layui-form-label">
-                        <span class="x-red">*</span>采集数量
-                    </label>
-                    <div class="layui-input-inline">
-                        <input type="number" id="number" name="number" required="" lay-verify="required" autocomplete="off" value="400" class="layui-input">
-                    </div>
-                </div> -->
 
                 <div class="layui-form-item">
                     <div class="layui-inline">
