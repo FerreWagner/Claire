@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.5.2
+-- version 4.8.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2018-05-11 10:44:06
--- 服务器版本： 10.1.21-MariaDB
--- PHP Version: 5.6.30
+-- Generation Time: 2018-05-18 11:57:02
+-- 服务器版本： 10.1.32-MariaDB
+-- PHP Version: 7.1.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -43,8 +45,8 @@ CREATE TABLE `claire_admin` (
 --
 
 INSERT INTO `claire_admin` (`id`, `username`, `password`, `count`, `email`, `role`, `switch`, `update_time`, `create_time`) VALUES
-(1, 'ferre', '6226514790b1175cf90bca075f3887a6c54ef58e', 55, '1573646491@qq.com', 0, 'true', 1515750624, 1513926388),
-(3, 'root', '6226514790b1175cf90bca075f3887a6c54ef58e', 8, '1573646491@qq.com', 1, 'true', 1515575528, 1514172018),
+(1, 'ferre', '6226514790b1175cf90bca075f3887a6c54ef58e', 56, '1573646491@qq.com', 0, 'true', 1526611272, 1513926388),
+(3, 'root', '6226514790b1175cf90bca075f3887a6c54ef58e', 11, '1573646491@qq.com', 1, 'true', 1526529131, 1514172018),
 (4, 'alexa', '6226514790b1175cf90bca075f3887a6c54ef58e', 3, '123@qq.com', 1, 'true', 1514969258, 1514966522),
 (7, 'Rick', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 1, '123@qq.com', 1, 'false', 1515576815, 1515576815),
 (8, 'Freeze', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 1, '1573646491@qq.com', 1, 'false', 1515577073, 1515577073),
@@ -65,6 +67,20 @@ CREATE TABLE `claire_alog` (
   `time` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
+--
+-- 转存表中的数据 `claire_alog`
+--
+
+INSERT INTO `claire_alog` (`id`, `type`, `name`, `ip`, `time`) VALUES
+(1, 0, 'ferre', '127.0.0.1', 1526287749),
+(2, 0, 'ferre', '127.0.0.1', 1526287754),
+(3, 0, 'root', '127.0.0.1', 1526287760),
+(4, 1, 'root', '127.0.0.1', 1526287767),
+(5, 0, 'root', '127.0.0.1', 1526450761),
+(6, 1, 'root', '127.0.0.1', 1526450773),
+(7, 1, 'root', '127.0.0.1', 1526529131),
+(8, 1, 'ferre', '127.0.0.1', 1526611272);
+
 -- --------------------------------------------------------
 
 --
@@ -73,25 +89,18 @@ CREATE TABLE `claire_alog` (
 
 CREATE TABLE `claire_article` (
   `id` int(11) NOT NULL,
-  `author` varchar(50) NOT NULL DEFAULT 'Ferre',
-  `title` text NOT NULL,
+  `author` varchar(50) DEFAULT NULL,
+  `title` text,
   `cate` text NOT NULL,
-  `order` int(11) NOT NULL,
-  `content` text NOT NULL,
-  `thumb` text NOT NULL,
-  `desc` text NOT NULL,
-  `see` int(11) NOT NULL,
-  `keywords` text NOT NULL,
+  `order` int(11) DEFAULT NULL,
+  `content` text,
+  `thumb` text,
+  `desc` text,
+  `see` int(11) DEFAULT NULL,
+  `keywords` text,
   `time` int(11) DEFAULT NULL,
   `pic` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
-
---
--- 转存表中的数据 `claire_article`
---
-
-INSERT INTO `claire_article` (`id`, `author`, `title`, `cate`, `order`, `content`, `thumb`, `desc`, `see`, `keywords`, `time`, `pic`) VALUES
-(1, 'Ferre', '1', '2', 0, '3', '4', '5', 6, '7', NULL, '8');
 
 -- --------------------------------------------------------
 
@@ -254,41 +263,50 @@ ALTER TABLE `claire_tourist`
 --
 ALTER TABLE `claire_admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
 --
 -- 使用表AUTO_INCREMENT `claire_alog`
 --
 ALTER TABLE `claire_alog`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
 --
 -- 使用表AUTO_INCREMENT `claire_article`
 --
 ALTER TABLE `claire_article`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `claire_artsee`
 --
 ALTER TABLE `claire_artsee`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `claire_category`
 --
 ALTER TABLE `claire_category`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- 使用表AUTO_INCREMENT `claire_link`
 --
 ALTER TABLE `claire_link`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- 使用表AUTO_INCREMENT `claire_system`
 --
 ALTER TABLE `claire_system`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- 使用表AUTO_INCREMENT `claire_tourist`
 --
 ALTER TABLE `claire_tourist`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
