@@ -9,6 +9,7 @@ use think\Loader;
 use app\admin\model\Article as ArticleModel;
 use think\Validate;
 use function GuzzleHttp\Promise\all;
+use function QL\html;
 
 class Article extends Base
 {
@@ -234,18 +235,28 @@ class Article extends Base
 //            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
 
             $html   = $this->fetch_url_page_contents($form['url']);
-
+//             if (strpos($html, '<head><title>404 Not Found</title></head>') !== false){  //头部即存在404/页面不存在
+// //                 break;
+//             }
             //制定规则
 //            $img_rule   = ['img' => ['img', 'src'],];
 //            $url_rule   = ['url' => ['a', 'href'],];
 
             $total_img = [];
-            //首页不规则规则制定：UU美图：https://www.uumnt.cc/
-            if (is_numeric(strpos($form['url'], 'uumnt'))){
-                $result = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.imgac>a')->query()->getData();
-                $total_img = $result->all();
-                halt($total_img);
+            $deep = 0;
+            //首页不规则规则制定：UU美图：https://www.uumnt.cc/ https://www.uumnt.cc/dongwu/17089.html https://www.uumnt.cc/dongwu/17089_2.html
+            while (strpos($html, '<head><title>404 Not Found</title></head>') === false){
+                if (strpos($form['url'], 'uumnt') !== false){
+                    $result = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.imgac>a')->query()->getData();
+                    $total_img[] = $result->all();
+                    
+                    $deep = $deep == 0 ? $deep + 2 : $deep + 1;
+                    $html = $this->fetch_url_page_contents(substr($form['url'], 0, -5).'_'.$deep.'.html');
+                    
+                    
+                }
             }
+            halt($total_img);
 
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();

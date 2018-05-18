@@ -85,7 +85,7 @@ class Base extends Controller
         //读取图片
         $img = $this->fetch_url_page_contents($url);
         //指定打开的文件
-        $fp = @ fopen($filepath.'/'.$filename, 'a');
+        $fp = @fopen($filepath.'/'.$filename, 'a');
         //写入图片到指定的文本
         fwrite($fp, $img);
         fclose($fp);
