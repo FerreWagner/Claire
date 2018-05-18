@@ -233,31 +233,27 @@ class Article extends Base
         if ($request->isPost()){
             $form = $request->param();
 //            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
-
+            
             $html   = $this->fetch_url_page_contents($form['url']);
-//             if (strpos($html, '<head><title>404 Not Found</title></head>') !== false){  //头部即存在404/页面不存在
-// //                 break;
-//             }
-            //制定规则
-//            $img_rule   = ['img' => ['img', 'src'],];
-//            $url_rule   = ['url' => ['a', 'href'],];
-
-            $total_img = $mid_var = [];
+            
+            $total_img = [];
             $deep = 0;
             //首页不规则规则制定：UU美图：https://www.uumnt.cc/ https://www.uumnt.cc/dongwu/17089.html https://www.uumnt.cc/dongwu/17089_2.html
             while (strpos($html, '<head><title>404 Not Found</title></head>') === false){
                 if (strpos($form['url'], 'uumnt') !== false){
                     $result = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.center>a')->query()->getData();
                     $_arr = $result->all();
-                    if (count($_arr) > 1){
+                    
+                    if (count($_arr) > 1){  //每页多图
                         foreach ($_arr as $_v){
                             $total_img = array_values(array_merge($_v, $total_img));
                         }
+                    }else { //每页单图
+                        $total_img = $_arr[0]['img'];
                     }
                     
                     $deep = $deep == 0 ? $deep + 2 : $deep + 1;
                     $html = $this->fetch_url_page_contents(substr($form['url'], 0, -5).'_'.$deep.'.html');
-                    
                     
                     if (count($total_img) > 1){ //多张图
                         foreach ($total_img as $_value){
@@ -272,14 +268,14 @@ class Article extends Base
                             ];
                             db('article')->insert($sql_data);
                         }
-                    }else {
+                    }else { //单张图
                         $see = random_int(60, 2000);
-                        $sql_data  = [    //单张图
+                        $sql_data  = [
                             'cate'   => $form['cate'],
                             'author' => 'internet',
                             'order'  => $form['order'],
                             'see'    => $see,
-                            'pic'    => $total_img[0],
+                            'pic'    => $total_img,
                             'time'   => time(),
                         ];
                         db('article')->insert($sql_data);
@@ -288,8 +284,7 @@ class Article extends Base
                     
                 }
             }
-//             halt($total_img);
-
+        
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do-single', ['cate' => $cate]);
