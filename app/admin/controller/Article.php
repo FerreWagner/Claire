@@ -228,7 +228,7 @@ class Article extends Base
         return $this->view->fetch('article-do', ['cate' => $cate]);
     }
 
-    public function singlePage(Request $request)
+    public function singlePage()
     {
         if (request()->isPost()){
             $form = input();
@@ -303,7 +303,7 @@ class Article extends Base
             
             //uumnt站url list抓取
             if (strpos($first_url, 'uumnt') !== false){
-                $result = QueryList::html($html)->rules(['href' => ['a', 'href']])->range('#mainbodypul>div')->query()->getData(function($item) use ($first_url, $baseurl){
+                $result = QueryList::html($html)->rules(['href' => ['a', 'href'], 'title' => ['.list_h', 'text']])->range('#mainbodypul>div')->query()->getData(function($item) use ($first_url, $baseurl){
                     if (strpos($item['href'], 'http') === false){
                         return $baseurl.$item['href'];
                     }else {
@@ -311,6 +311,7 @@ class Article extends Base
                     }
                 });
                 $result = $result->all();   //得到首页所有url
+                halt($result);
                 foreach ($result as $_value){
                     $this->singlePage($_value);
                 }
