@@ -313,7 +313,7 @@ class Article extends Base
                 $result = $result->all();   //得到首页所有url
                 halt($result);
                 foreach ($result as $_value){
-                    $this->singlePage($_value);
+                    $this->inCrawlPage($_value, $title);    //TODO $title
                 }
             }
         }
@@ -321,6 +321,60 @@ class Article extends Base
         
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do-cate', ['cate' => $cate]);
+    }
+    
+    public function inCrawlPage($url, $cate, $order, $title)
+    {
+            $html   = $this->fetch_url_page_contents($url);
+    
+            $total_img = [];
+            $deep = 0;
+            //首页不规则规则制定：UU美图：https://www.uumnt.cc/ https://www.uumnt.cc/dongwu/17089.html https://www.uumnt.cc/dongwu/17089_2.html
+            while (strpos($html, '<head><title>404 Not Found</title></head>') === false){
+                if (strpos($url, 'uumnt') !== false){
+                    $result = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.center>a')->query()->getData();
+                    $_arr = $result->all();
+    
+                    if (count($_arr) > 1){  //每页多图
+                        foreach ($_arr as $_v){
+                            $total_img = array_values(array_merge($_v, $total_img));
+                        }
+                    }else { //每页单图
+                        $total_img = $_arr[0]['img'];
+                    }
+    
+                    $deep = $deep == 0 ? $deep + 2 : $deep + 1;
+                    $html = $this->fetch_url_page_contents(substr($url, 0, -5).'_'.$deep.'.html');
+    
+                    if (count($total_img) > 1){ //多张图
+                        foreach ($total_img as $_value){
+                            $see = random_int(60, 2000);
+                            $sql_data  = [
+                                'cate'   => $cate,
+                                'author' => 'internet',
+                                'order'  => $order,
+                                'see'    => $see,
+                                'pic'    => $_value,
+                                'time'   => time(),
+                            ];
+                            db('article')->insert($sql_data);
+                        }
+                    }else { //单张图
+                        $see = random_int(60, 2000);
+                        $sql_data  = [
+                            'cate'   => $cate,
+                            'author' => 'internet',
+                            'order'  => $order,
+                            'see'    => $see,
+                            'pic'    => $total_img,
+                            'time'   => time(),
+                        ];
+                        db('article')->insert($sql_data);
+                    }
+                    $total_img = [];
+    
+                }
+            }
     }
     
     /**
