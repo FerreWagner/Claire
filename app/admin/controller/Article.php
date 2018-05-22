@@ -233,7 +233,6 @@ class Article extends Base
         if (request()->isPost()){
             $form = input();
 //            $baseurl = parse_url($form['url'])['scheme'].'://'.parse_url($form['url'])['host']; //构建完整URL
-            
             $html   = $this->fetch_url_page_contents($form['url']);
             
             $total_img = [];
@@ -301,19 +300,23 @@ class Article extends Base
             $html      = $this->fetch_url_page_contents($form['first_url']);
             $baseurl   = parse_url($form['first_url'])['scheme'].'://'.parse_url($form['first_url'])['host']; //构建完整URL
             
-            //uumnt站url list抓取
+            $page = 0;
+            if (strpos($first_url, 'list') != false) $page = substr($first_url, -6, 1);
+            for ($page; $page < $a; $page ++)
+            {
+                
+            }
+            
+            //uumnt站url list循环抓取
             if (strpos($first_url, 'uumnt') !== false){
                 $result = QueryList::html($html)->rules(['href' => ['a', 'href'], 'title' => ['.list_h', 'text']])->range('#mainbodypul>div')->query()->getData(function($item) use ($first_url, $baseurl){
-                    if (strpos($item['href'], 'http') === false){
-                        return $baseurl.$item['href'];
-                    }else {
-                        return $item['href'];
-                    }
+                    if (strpos($item['href'], 'http') === false) return [$baseurl.$item['href'], $item['title']];
+                    return [$item['href'], $item['title']]; //省略else
                 });
-                $result = $result->all();   //得到首页所有url
-                halt($result);
+                $result = $result->all();   //得到首页所有url/title
+                
                 foreach ($result as $_value){
-                    $this->inCrawlPage($_value, $title);    //TODO $title
+                    $this->inCrawlPage($_value[0], $form['cate'], $form['order'], $_value[1]);  //爬取当前目录cate页
                 }
             }
         }
@@ -352,6 +355,7 @@ class Article extends Base
                             $sql_data  = [
                                 'cate'   => $cate,
                                 'author' => 'internet',
+                                'title'  => $title,
                                 'order'  => $order,
                                 'see'    => $see,
                                 'pic'    => $_value,
@@ -363,6 +367,7 @@ class Article extends Base
                         $see = random_int(60, 2000);
                         $sql_data  = [
                             'cate'   => $cate,
+                            'title'  => $title,
                             'author' => 'internet',
                             'order'  => $order,
                             'see'    => $see,
@@ -393,11 +398,8 @@ class Article extends Base
         
         //采集并处理为完整url的img
         $re1 = QueryList::html($html)->rules($img_rule)->query()->getData(function($item) use ($url, $baseurl){
-            if (!is_numeric(strpos($item['img'], 'http'))){
-                return $baseurl.$item['img'];
-            }else {
-                return $item['img'];
-            }
+            if (!is_numeric(strpos($item['img'], 'http'))) return $baseurl.$item['img'];
+            return $item['img'];
         }); //得到img
         
         //筛选图片
@@ -413,11 +415,8 @@ class Article extends Base
         //处理并采集为完整的url
         if (!empty($url_rule)){
             $re2 = QueryList::html($html)->rules($url_rule)->query()->getData(function($item) use ($url, $baseurl){
-                if (!is_numeric(strpos($item['url'], 'http'))){
-                    return $baseurl.$item['url'];
-                }else {
-                    return $item['url'];
-                }
+                if (!is_numeric(strpos($item['url'], 'http'))) return $baseurl.$item['url'];
+                return $item['url'];
             }); //得到url
             
             $re_url = $re2->all();
