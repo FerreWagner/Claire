@@ -294,31 +294,42 @@ class Article extends Base
 //         https://www.uumnt.cc/shuaige/    https://www.uumnt.cc/shuaige/list_2.html
         //1、预备url，给出最后的url 2、分割url，拼凑并循环每页并得到每页的待爬取url list 3、调用singlepage方法植入title爬取数据
         if ($request->isPost()){
-            $form = $request->param();
+            
+            $form      = $request->param();
             $first_url = $form['first_url'];
             $last_url  = $form['last_url'];
             $html      = $this->fetch_url_page_contents($form['first_url']);
             $baseurl   = parse_url($form['first_url'])['scheme'].'://'.parse_url($form['first_url'])['host']; //构建完整URL
             
-            $page = 0;
+            $page      = 1;
             if (strpos($first_url, 'list') != false) $page = substr($first_url, -6, 1);
-            for ($page; $page < $a; $page ++)
-            {
-                
-            }
+            $last_page = $page;
+            if (!empty($last_url)) $last_page = substr($last_url, -6, 1);   //当last_url存在，则置换last_page的值,否则为page+1
             
-            //uumnt站url list循环抓取
-            if (strpos($first_url, 'uumnt') !== false){
-                $result = QueryList::html($html)->rules(['href' => ['a', 'href'], 'title' => ['.list_h', 'text']])->range('#mainbodypul>div')->query()->getData(function($item) use ($first_url, $baseurl){
-                    if (strpos($item['href'], 'http') === false) return [$baseurl.$item['href'], $item['title']];
-                    return [$item['href'], $item['title']]; //省略else
-                });
-                $result = $result->all();   //得到首页所有url/title
+            for ($page; $page < $last_page+1; $page ++)
+            {
+                //uumnt站 list循环抓取
+                if (strpos($first_url, 'uumnt') !== false){
+                    $result = QueryList::html($html)->rules(['href' => ['a', 'href'], 'title' => ['.list_h', 'text']])->range('#mainbodypul>div')->query()->getData(function($item) use ($first_url, $baseurl){
+                        if (strpos($item['href'], 'http') === false) return [$baseurl.$item['href'], $item['title']];
+                        return [$item['href'], $item['title']]; //省略else
+                    });
+                        $result = $result->all();   //得到首页所有url/title
                 
-                foreach ($result as $_value){
-                    $this->inCrawlPage($_value[0], $form['cate'], $form['order'], $_value[1]);  //爬取当前目录cate页
+                        foreach ($result as $_value){
+                            $this->inCrawlPage($_value[0], $form['cate'], $form['order'], $_value[1]);  //爬取当前目录cate页
+                        }
                 }
+//                 echo $page.'页'.$first_url.'<br />';
+                if (strpos($first_url, 'html') === false){
+                    $first_url = $first_url.'list_'.($page + 1).'.html';
+                }else {
+                    $first_url = substr($first_url, 0, -7).'_'.($page + 1).'.html';
+                }
+                $html      = $this->fetch_url_page_contents($first_url);
+                
             }
+
         }
         
         
