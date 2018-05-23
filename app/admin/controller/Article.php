@@ -225,6 +225,10 @@ class Article extends Base
         return $this->view->fetch('article-do', ['cate' => $cate]);
     }
 
+    /**
+     * 单页爬取
+     * @return string
+     */
     public function singlePage()
     {
         if (request()->isPost()){
@@ -287,49 +291,90 @@ class Article extends Base
         return $this->view->fetch('article-do-single', ['cate' => $cate]);
     }
     
+    /**
+     * 条目爬取
+     * @param Request $request
+     * @return string
+     */
     public function cateCrawl(Request $request)
     {
-//         https://www.uumnt.cc/shuaige/    https://www.uumnt.cc/shuaige/list_2.html
         //1、预备url，给出最后的url 2、分割url，拼凑并循环每页并得到每页的待爬取url list 3、调用singlepage方法植入title爬取数据
         if ($request->isPost()){
             
             $form      = $request->param();
             $first_url = $form['first_url'];
             $last_url  = $form['last_url'];
-            $html      = $this->fetch_url_page_contents($form['first_url']);
+//             $html      = $this->fetch_url_page_contents($form['first_url']);
+            $html      = file_get_contents($form['first_url']);
+            
             $baseurl   = parse_url($form['first_url'])['scheme'].'://'.parse_url($form['first_url'])['host']; //构建完整URL
             
-            $page      = 1;     //初始化page
-            if (strpos($first_url, 'list') != false) $page = substr($first_url, -6, 1); //提取page
-            $last_page = $page; //初始化last_page
-            if (!empty($last_url)) $last_page = substr($last_url, -6, 1);   //当last_url存在，则置换last_page的值,否则为page+1
-            
-            for ($page; $page < $last_page+1; $page ++)
+            //https://www.uumnt.cc/shuaige/    https://www.uumnt.cc/shuaige/list_2.html
+            if (strpos($first_url, 'uumnt') != false)
             {
-                //uumnt站 list循环抓取
-                if (strpos($first_url, 'uumnt') !== false){
+                $page      = 1;     //初始化page
+                if (strpos($first_url, 'list') != false) $page = substr($first_url, -6, 1); //提取page
+                $last_page = $page; //初始化last_page
+                if (!empty($last_url)) $last_page = substr($last_url, -6, 1);   //当last_url存在，则置换last_page的值,即循环体内只循环此页
+                
+                for ($page; $page < $last_page+1; $page ++)
+                {
+                    //uumnt站 list循环抓取
                     $ql     = QueryList::html($html)->rules(['href' => ['a', 'href'], 'title' => ['.list_h', 'text']])->range('#mainbodypul>div');
                     $result = $ql->query()->getData(function($item) use ($first_url, $baseurl){
                         if (strpos($item['href'], 'http') === false) return [$baseurl.$item['href'], $item['title']];
                         return [$item['href'], $item['title']]; //省略else
                     });
-                    
+            
                     $ql->destruct();            //释放资源
                     $result = $result->all();   //得到页面所有url&title
                     foreach ($result as $_value){
                         //爬取当前目录cate页
                         $this->inCrawlPage($_value[0], $form['cate'], $form['order'], $_value[1]);
                     }
+                    //echo $page.'页'.$first_url.'<br />';
+                    if (strpos($first_url, 'html') === false){
+                        $first_url = $first_url.'list_'.($page + 1).'.html';
+                    }else {
+                        $first_url = substr($first_url, 0, -7).'_'.($page + 1).'.html';
+                    }
+                    
+                    $html = $this->fetch_url_page_contents($first_url);
                 }
-//                 echo $page.'页'.$first_url.'<br />';
-                if (strpos($first_url, 'html') === false){
-                    $first_url = $first_url.'list_'.($page + 1).'.html';
-                }else {
-                    $first_url = substr($first_url, 0, -7).'_'.($page + 1).'.html';
-                }
-                
-                $html = $this->fetch_url_page_contents($first_url);
             }
+            elseif (strpos($first_url, 'mzitu'))    //http://www.mzitu.com/xinggan/ http://www.mzitu.com/xinggan/page/2/
+            {
+                $page      = 1;
+                if (strpos($first_url, 'page') != false) $page = substr($first_url, -2, 1); //提取page
+                $last_page = $page;
+                if (!empty($last_url)) $last_page = substr($last_url, -2, 1);
+                
+                for ($page; $page < $last_page+1; $page ++)
+                {
+                    //mzitu站 list循环抓取
+                    $ql     = QueryList::html($html)->rules(['href' => ['a', 'href'], 'title' => ['a', 'text']])->range('#pins>li>span');
+                    $result = $ql->query()->getData(function($item) use ($first_url, $baseurl){
+                        if (strpos($item['href'], 'http') === false) return [$baseurl.$item['href'], $item['title']];
+                        return [$item['href'], $item['title']]; //省略else
+                    });
+                    $ql->destruct();            //释放资源
+                    $result = $result->all();   //得到页面所有url&title
+                    halt($result);
+                    foreach ($result as $_value){
+                        //爬取当前目录cate页
+                        $this->inCrawlPage($_value[0], $form['cate'], $form['order'], $_value[1]);
+                    }
+                    
+                    if (strpos($first_url, 'html') === false){
+                        $first_url = $first_url.'list_'.($page + 1).'.html';    //TODO
+                    }else {
+                        $first_url = substr($first_url, 0, -7).'_'.($page + 1).'.html'; //TODO
+                    }
+            $html = file_get_contents($first_url);
+//                     $html = $this->fetch_url_page_contents($first_url);
+                }
+            }
+            
 
         }
         
@@ -339,60 +384,72 @@ class Article extends Base
     
     public function inCrawlPage($url, $cate, $order, $title)
     {
-            $html      = $this->fetch_url_page_contents($url);
-    
-            $total_img = [];
-            $deep      = 0;
-            //首页不规则规则制定：UU美图：https://www.uumnt.cc/ https://www.uumnt.cc/dongwu/17089.html https://www.uumnt.cc/dongwu/17089_2.html
-            while (strpos($html, '<head><title>404 Not Found</title></head>') === false){
-                if (strpos($url, 'uumnt') !== false){
-                    $ql     = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.center>a');
-                    $result = $ql->query()->getData();
-                    $_arr   = $result->all();
-                    $ql->destruct();        //释放资源
-                    
-                    if (count($_arr) > 1){  //每页多图
-                        foreach ($_arr as $_v){
-                            $total_img = array_values(array_merge($_v, $total_img));
-                        }
-                    }else { //每页单图
-                        $total_img = $_arr[0]['img'];
+        if (strpos($url, 'uumnt')){
+            $_rule = '.center>a';
+        }elseif (strpos($url, 'mzitu')){
+            $_rule = '.main-image>a';
+        }
+        $html      = $this->fetch_url_page_contents($url);
+        halt(2);
+        $total_img = [];
+        $deep      = 0;
+        //首页不规则规则制定：UU美图：https://www.uumnt.cc/ https://www.uumnt.cc/dongwu/17089.html https://www.uumnt.cc/dongwu/17089_2.html
+        while (strpos($html, '<head><title>404 Not Found</title></head>') === false){
+//             if (strpos($url, 'uumnt') !== false){
+                $ql     = QueryList::html($html)->rules(['img' => ['img', 'src']])->range($_rule);
+                $result = $ql->query()->getData();
+                $_arr   = $result->all();
+                $ql->destruct();        //释放资源
+                
+                if (count($_arr) > 1){  //每页多图
+                    foreach ($_arr as $_v){
+                        $total_img = array_values(array_merge($_v, $total_img));
                     }
-                    
+                }else { //每页单图
+                    $total_img = $_arr[0]['img'];
+                }
+                
+                if (strpos($url, 'uumnt')){
                     $deep = $deep == 0 ? $deep + 2 : $deep + 1;
                     $html = $this->fetch_url_page_contents(substr($url, 0, -5).'_'.$deep.'.html');
-    
-                    if (count($total_img) > 1){ //多张图
-                        foreach ($total_img as $_value){
-                            $see = random_int(60, 2000);
-                            $sql_data  = [
-                                'cate'   => $cate,
-                                'author' => 'internet',
-                                'title'  => $title,
-                                'order'  => $order,
-                                'see'    => $see,
-                                'pic'    => $_value,
-                                'time'   => time(),
-                            ];
-                            db('article')->insert($sql_data);
-                        }
-                    }else { //单张图
+                }elseif (strpos($url, 'mzitu')){
+                    $deep ++;
+                    $html = $this->fetch_url_page_contents(substr($url, 0, -2).'page/'.$deep.'');  //TODO
+                }
+                
+                halt(substr($url, 0, -2).'page/'.$deep.'');
+                
+                if (count($total_img) > 1){ //多张图
+                    foreach ($total_img as $_value){
                         $see = random_int(60, 2000);
                         $sql_data  = [
                             'cate'   => $cate,
-                            'title'  => $title,
                             'author' => 'internet',
+                            'title'  => $title,
                             'order'  => $order,
                             'see'    => $see,
-                            'pic'    => $total_img,
+                            'pic'    => $_value,
                             'time'   => time(),
                         ];
                         db('article')->insert($sql_data);
                     }
-                    $total_img = [];
-    
+                }else { //单张图
+                    $see = random_int(60, 2000);
+                    $sql_data  = [
+                        'cate'   => $cate,
+                        'title'  => $title,
+                        'author' => 'internet',
+                        'order'  => $order,
+                        'see'    => $see,
+                        'pic'    => $total_img,
+                        'time'   => time(),
+                    ];
+                    db('article')->insert($sql_data);
                 }
-            }
+                $total_img = [];
+
+//             }
+        }
     }
     
     /**
