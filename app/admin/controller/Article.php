@@ -422,6 +422,7 @@ class Article extends Base
                 if (count($total_img) > 1){ //多张图
                     foreach ($total_img as $_value){
                         $see = random_int(60, 2000);
+                        $this->getimg($_value, 'fake');
                         $sql_data  = [
                             'cate'   => $cate,
                             'author' => 'internet',
