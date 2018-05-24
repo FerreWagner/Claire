@@ -11,4 +11,18 @@ class Index extends Common
     }
     
     
+    public function service()
+    {
+        return $this->view->fetch('index/services');
+    }
+    public function about()
+    {
+        return $this->view->fetch('index/about');
+    }
+    public function contact()
+    {
+        return $this->view->fetch('index/contact');
+    }
+    
+    
 }
