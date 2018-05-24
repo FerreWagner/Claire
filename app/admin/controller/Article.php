@@ -401,7 +401,6 @@ class Article extends Base
                 $_arr   = $result->all();
                 $ql->destruct();        //释放资源
                 
-                dump($_arr);
                 if (count($_arr) > 1){  //每页多图
                     foreach ($_arr as $_v){
                         $total_img = array_values(array_merge($_v, $total_img));

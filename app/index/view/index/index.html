@@ -17,12 +17,9 @@
   <body>
 
   <!-- START: header -->
-  
-  <div class="probootstrap-loader"></div>
-
   {include file='public_header' /}
   <!-- END: header -->
-  
+
   <div class="probootstrap-section">
     <div class="container text-center">
       <div class="row">
@@ -32,94 +29,95 @@
         </div>
       </div>
 
-      <div class="row probootstrap-gutter16">
-        <div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_1.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>A turquoise colored sea</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_2.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>Frozen Mount</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-      </div>
 
-      <div class="row probootstrap-gutter16">
-        <div class="col-md-5 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_3.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>Earthly Clay</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-md-3 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_5.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>Man Captured</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_4.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>Mountain with pines</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-      </div>
+	  {volist name="result" id="result_pic"}
+  		{if $i == 1 || $i == 2}
+  			{if $i == 1}
+  				<div class="row probootstrap-gutter16">
+			        <div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_1.jpg);">
+			            <div class="probootstrap-photo-details">
+			              <h2>A turquoise colored sea</h2>
+			              <p>Landscape</p>
+			            </div>
+			          </a>
+			        </div>
+  			{/if}
+  			{if $i == 2}
+		  			<div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_2.jpg);">
+			            <div class="probootstrap-photo-details">
+			              <h2>Frozen Mount</h2>
+			              <p>Landscape</p>
+			            </div>
+			          </a>
+			        </div>
+	      		</div>
+  			{/if}
+  		{elseif $i == 3 || $i == 4 || $i == 5 /}
+	  		{if $i == 3}
+  				<div class="row probootstrap-gutter16">
+			        <div class="col-md-5 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_3.jpg);">
+			            <div class="probootstrap-photo-details">
+			              <h2>Earthly Clay</h2>
+			              <p>Landscape</p>
+			            </div>
+			          </a>
+			        </div>
+  			{/if}
+  			{if $i == 4}
+  				<div class="col-md-3 probootstrap-animate" data-animate-effect="fadeIn">
+		          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_5.jpg);">
+		            <div class="probootstrap-photo-details">
+		              <h2>Man Captured</h2>
+		              <p>Landscape</p>
+		            </div>
+		          </a>
+		        </div>
+  			{/if}
+  			{if $i == 5}
+	  			<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+		          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_4.jpg);">
+		            <div class="probootstrap-photo-details">
+		              <h2>Mountain with pines</h2>
+		              <p>Landscape</p>
+		            </div>
+		          </a>
+		        </div>
+		      </div>
+  			{/if}
+  		{else /}
+  			{if $i == 6}
+	  			<div class="row probootstrap-gutter16">
+			        <div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_7.jpg);">
+			            <div class="probootstrap-photo-details">
+			              <h2>Mountains</h2>
+			              <p>Landscape</p>
+			            </div>
+			          </a>
+			        </div>
+  			{/if}
+  			{if $i == 7}
+	  			<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+		          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_6.jpg);">
+		            <div class="probootstrap-photo-details">
+		              <h2>Beautiful Sunset</h2>
+		              <p>Landscape</p>
+		            </div>
+		          </a>
+		        </div>
+		      </div>
+  			{/if}
+  		{/if}
+	  {/volist}
 
-       <div class="row probootstrap-gutter16">
-        <div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_7.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>Mountains</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
-          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_6.jpg);">
-            <div class="probootstrap-photo-details">
-              <h2>Beautiful Sunset</h2>
-              <p>Landscape</p>
-            </div>
-          </a>
-        </div>
-      </div>
       
     </div>
   </div>
 
-  <footer class="probootstrap-footer" role="contentinfo">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <p class="probootstrap-copyright">Copyright &copy; 2018.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a></p>
-          <ul class="probootstrap-social">
-            <li><a href="#"><i class="icon-twitter"></i></a></li>
-            <li><a href="#"><i class="icon-facebook2"></i></a></li>
-            <li><a href="#"><i class="icon-instagram2"></i></a></li>
-            <li><a href="#"><i class="icon-google-plus"></i></a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <div class="gototop js-top">
-    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
-  </div>
-  
+  {include file='public_footer' /}
 
   {include file='public_js' /}
 
