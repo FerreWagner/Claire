@@ -6,9 +6,9 @@
     <title></title>
     <meta name="description" content="claire">
     <meta name="keywords" content="claire">
-    
+    <meta name="referrer" content="never">
     {include file='public_css' /}
-
+<meta name="referrer" content="never">
     <!--[if lt IE 9]>
       <script src="js/vendor/html5shiv.min.js"></script>
       <script src="js/vendor/respond.min.js"></script>
@@ -31,11 +31,12 @@
 
 
 	  {volist name="result" id="result_pic"}
+	  
   		{if $i == 1 || $i == 2}
   			{if $i == 1}
   				<div class="row probootstrap-gutter16">
 			        <div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
-			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_1.jpg);">
+			          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 			            <div class="probootstrap-photo-details">
 			              <h2>A turquoise colored sea</h2>
 			              <p>Landscape</p>
@@ -45,7 +46,7 @@
   			{/if}
   			{if $i == 2}
 		  			<div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
-			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_2.jpg);">
+			          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 			            <div class="probootstrap-photo-details">
 			              <h2>Frozen Mount</h2>
 			              <p>Landscape</p>
