@@ -6,9 +6,8 @@
     <title></title>
     <meta name="description" content="claire">
     <meta name="keywords" content="claire">
-    <meta name="referrer" content="never">
     {include file='public_css' /}
-<meta name="referrer" content="never">
+
     <!--[if lt IE 9]>
       <script src="js/vendor/html5shiv.min.js"></script>
       <script src="js/vendor/respond.min.js"></script>
@@ -59,7 +58,7 @@
 	  		{if $i == 3}
   				<div class="row probootstrap-gutter16">
 			        <div class="col-md-5 probootstrap-animate" data-animate-effect="fadeIn">
-			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_3.jpg);">
+			          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 			            <div class="probootstrap-photo-details">
 			              <h2>Earthly Clay</h2>
 			              <p>Landscape</p>
@@ -69,7 +68,7 @@
   			{/if}
   			{if $i == 4}
   				<div class="col-md-3 probootstrap-animate" data-animate-effect="fadeIn">
-		          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_5.jpg);">
+		          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 		            <div class="probootstrap-photo-details">
 		              <h2>Man Captured</h2>
 		              <p>Landscape</p>
@@ -79,7 +78,7 @@
   			{/if}
   			{if $i == 5}
 	  			<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
-		          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_4.jpg);">
+		          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 		            <div class="probootstrap-photo-details">
 		              <h2>Mountain with pines</h2>
 		              <p>Landscape</p>
@@ -92,7 +91,7 @@
   			{if $i == 6}
 	  			<div class="row probootstrap-gutter16">
 			        <div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
-			          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_7.jpg);">
+			          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 			            <div class="probootstrap-photo-details">
 			              <h2>Mountains</h2>
 			              <p>Landscape</p>
@@ -102,7 +101,7 @@
   			{/if}
   			{if $i == 7}
 	  			<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
-		          <a href="single-page.html" class="img-bg" style="background-image: url(__STATIC__/img/img_6.jpg);">
+		          <a href="single-page.html" class="img-bg" style="background-image: url({$result_pic['pic']});">
 		            <div class="probootstrap-photo-details">
 		              <h2>Beautiful Sunset</h2>
 		              <p>Landscape</p>
@@ -113,7 +112,7 @@
   			{/if}
   		{/if}
 	  {/volist}
-
+		{$result->render()}
       
     </div>
   </div>

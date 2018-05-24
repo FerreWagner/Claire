@@ -7,6 +7,7 @@ class Index extends Common
 {
     public function index()
     {
+
         $result = db('article')->field('id, title, cate, see, pic')->paginate(7);
         $this->view->assign([
             'result' => $result,

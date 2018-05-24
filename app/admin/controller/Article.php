@@ -199,6 +199,9 @@ class Article extends Base
             $sql_data = [];
             foreach ($filter_img as $_value){
                 $see = random_int(60, 2000);
+                $file_name = $this->getimg($_value, 'fake');
+                //http://www.suibianlu.com/meitu/   http://www.27270.com/tag/434.html
+//                halt($file_name);
                 $sql_data[]  = [
                     'cate'   => $form['cate'],
                     'author' => 'internet',
@@ -422,7 +425,6 @@ class Article extends Base
                 if (count($total_img) > 1){ //多张图
                     foreach ($total_img as $_value){
                         $see = random_int(60, 2000);
-                        $this->getimg($_value, 'fake');
                         $sql_data  = [
                             'cate'   => $cate,
                             'author' => 'internet',
