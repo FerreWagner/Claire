@@ -298,6 +298,7 @@ class Article extends Base
      */
     public function cateCrawl(Request $request)
     {
+        set_time_limit(0);
         //1、预备url，给出最后的url 2、分割url，拼凑并循环每页并得到每页的待爬取url list 3、调用singlepage方法植入title爬取数据
         if ($request->isPost()){
             
@@ -421,8 +422,9 @@ class Article extends Base
                 
                 if (count($total_img) > 1){ //多张图
                     foreach ($total_img as $_value){
-                        $see = random_int(60, 2000);
-                        $this->getimg($_value, 'fake');
+                        $see       = random_int(60, 2000);
+                        $real_name = $this->downLoadPic($total_img, 'fake');
+                        
                         $sql_data  = [
                             'cate'   => $cate,
                             'author' => 'internet',
@@ -435,7 +437,10 @@ class Article extends Base
                         db('article')->insert($sql_data);
                     }
                 }else { //单张图
-                    $see = random_int(60, 2000);
+                    $see       = random_int(60, 2000);
+                    $real_name = $this->downLoadPic($total_img, 'fake');
+                    
+                    
                     $sql_data  = [
                         'cate'   => $cate,
                         'title'  => $title,
@@ -528,6 +533,20 @@ class Article extends Base
     {
         $not_null = array_filter($arr);
         return array_unique($not_null);
+    }
+    
+    /**
+     * 返回图片名
+     * @param unknown $link
+     * @param unknown $dir
+     * @return boolean|string
+     */
+    public function downLoadPic($link, $dir)
+    {
+        $file_name = $this->getimg($link, $dir);
+        ob_flush();
+        flush();
+        return $file_name;
     }
 
 
