@@ -86,10 +86,13 @@ class Base extends Controller
         $img = $this->fetch_url_page_contents($url);
         //指定打开的文件
         $fp = @fopen($filepath.'/'.$filename, 'a');
+        
         //写入图片到指定的文本
         fwrite($fp, $img);
         fclose($fp);
-        return '/'.$filepath.'/'.$filename;
+//         return '/'.$filepath.'/'.$filename;
+//         F:\xampp\tmp\phpBA3C.tmp
+        return ROOT_PATH . 'public' . DS . 'uploads' . DS . $filepath . DS . $filename;
     }
     
     public function fetch_url_page_contents($url){
