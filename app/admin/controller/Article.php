@@ -2,6 +2,8 @@
 
 namespace app\admin\controller;
 
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 use QL\QueryList;
 use think\Request;
 use app\admin\common\Base;
@@ -424,7 +426,8 @@ class Article extends Base
                     foreach ($total_img as $_value){
                         $see       = random_int(60, 2000);
                         $real_name = $this->downLoadPic($total_img, 'fake');
-                        
+                        $this->qiniuSet($real_name);
+
                         $sql_data  = [
                             'cate'   => $cate,
                             'author' => 'internet',
@@ -439,8 +442,8 @@ class Article extends Base
                 }else { //单张图
                     $see       = random_int(60, 2000);
                     $real_name = $this->downLoadPic($total_img, 'fake');
-                    
-                    
+                    $this->qiniuSet($real_name);
+
                     $sql_data  = [
                         'cate'   => $cate,
                         'title'  => $title,
@@ -547,6 +550,27 @@ class Article extends Base
         ob_flush();
         flush();
         return $file_name;
+    }
+
+    public function qiniuSet($filePath)
+    {
+        //获取后缀
+        $ext = explode('.', $filePath)[1];
+        //上传到七牛后保存的文件名(加盐)
+        $key = config('qiniu.salt').substr(md5($filePath) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
+        //构建鉴权对象
+        $auth = new Auth(config('qiniu.ak'), config('qiniu.sk'));
+        //要上传的空间
+        $token = $auth->uploadToken(config('qiniu.bucket'));
+        //初始化uploadmanager对象并进行文件的上传
+        $uploadMgr = new UploadManager();
+        //调用uploadmanager的putfile方法进行文件的上传
+        list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+        $_data['pic']    = config('qiniu.domain').'/'.$ret['key'];
+        $err ? $_data['thumb'] = '图片上传失败' : $_data['thumb'] = config('qiniu.domain').'/'.$ret['key'];
+//        E:\programinstall\xampp\tmp\php52B.tmp
+//        E:\programinstall\xampp\htdocs\Claire\public\uploads\fake\2018-05-26-23-36-21-374.jpg
+        halt($err.'end');
     }
 
 

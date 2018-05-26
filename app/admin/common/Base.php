@@ -69,9 +69,8 @@ class Base extends Controller
     }
     
     public function getimg($url, $filepath) {
-        if ($url == '') {
-            return false;
-        }
+        if ($url == '') return false;
+        
         $ext = strrchr($url, '.');
         //     echo $ext;die;
         if ($ext != '.gif' && $ext != '.jpg') {
@@ -90,7 +89,7 @@ class Base extends Controller
         //写入图片到指定的文本
         fwrite($fp, $img);
         fclose($fp);
-//         return '/'.$filepath.'/'.$filename;
+         return '/'.$filepath.'/'.$filename;
 //         F:\xampp\tmp\phpBA3C.tmp
         return ROOT_PATH . 'public' . DS . 'uploads' . DS . $filepath . DS . $filename;
     }
