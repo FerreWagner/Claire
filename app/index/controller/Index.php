@@ -7,7 +7,6 @@ class Index extends Common
 {
     public function index()
     {
-//         echo $_SERVER['HTTP_REFERER'];die;
         $result = db('article')->field('id, title, cate, see, thumb')->paginate(7);
         $this->view->assign([
             'result' => $result,
