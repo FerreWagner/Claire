@@ -316,9 +316,13 @@ class Article extends Base
             if (strpos($first_url, 'uumnt') != false)
             {
                 $page      = 1;     //初始化page
-                if (strpos($first_url, 'list') != false) $page = substr($first_url, -6, 1); //提取page
+                if (strpos($first_url, 'list') != false){
+                    if (preg_match('|(\d+)|',$first_url,$r)) $page = $r[1];
+                }
                 $last_page = $page; //初始化last_page
-                if (!empty($last_url)) $last_page = substr($last_url, -6, 1);   //当last_url存在，则置换last_page的值,即循环体内只循环此页
+                if (!empty($last_url)){
+                    if (preg_match('|(\d+)|',$last_url,$r)) $last_page = $r[1];   //当last_url存在，则置换last_page的值,即循环体内只循环此页
+                }
                 
                 for ($page; $page < $last_page+1; $page ++)
                 {
@@ -339,7 +343,8 @@ class Article extends Base
                     if (strpos($first_url, 'html') === false){
                         $first_url = $first_url.'list_'.($page + 1).'.html';
                     }else {
-                        $first_url = substr($first_url, 0, -7).'_'.($page + 1).'.html';
+                        $first_url = preg_replace('|(\d+)|', ($page + 1), $first_url);
+//                         $first_url = substr($first_url, 0, -7).'_'.($page + 1).'.html';
                     }
                     
                     $html = $this->fetch_url_page_contents($first_url);
@@ -426,26 +431,43 @@ class Article extends Base
                     foreach ($total_img as $_value){
                         $see       = random_int(60, 2000);
                         $real_name = $this->downLoadPic($total_img, 'fake');
+                        if (is_array($real_name)){
+                            foreach ($real_name as $_v){
+                                $thumb     = 'http://'.$this->qiniuSet($_v);
+                                $sql_data  = [
+                                    'cate'   => $cate,
+                                    'author' => 'internet',
+                                    'title'  => $title,
+                                    'order'  => $order,
+                                    'thumb'  => $thumb,
+                                    'see'    => $see,
+                                    'pic'    => $_value,
+                                    'time'   => time(),
+                                ];
+                                db('article')->insert($sql_data);
+                            }
+                        }else {
+                            $thumb     = 'http://'.$this->qiniuSet($real_name[0]);
+                            $sql_data  = [
+                                'cate'   => $cate,
+                                'author' => 'internet',
+                                'title'  => $title,
+                                'order'  => $order,
+                                'thumb'  => $thumb,
+                                'see'    => $see,
+                                'pic'    => $_value,
+                                'time'   => time(),
+                            ];
+                            db('article')->insert($sql_data);
+                        }
 
-                        $thumb     = 'http://'.$this->qiniuSet($real_name);
-
-                        $sql_data  = [
-                            'cate'   => $cate,
-                            'author' => 'internet',
-                            'title'  => $title,
-                            'order'  => $order,
-                            'thumb'  => $thumb,
-                            'see'    => $see,
-                            'pic'    => $_value,
-                            'time'   => time(),
-                        ];
-                        db('article')->insert($sql_data);
+                        
                     }
                 }else { //单张图
                     $see       = random_int(60, 2000);
                     $real_name = $this->downLoadPic($total_img, 'fake');
 
-                    $thumb     = 'http://'.$this->qiniuSet($real_name);
+                    $thumb     = 'http://'.$this->qiniuSet($real_name[0]);
 
                     $sql_data  = [
                         'cate'   => $cate,
@@ -550,9 +572,18 @@ class Article extends Base
      */
     public function downLoadPic($link, $dir)
     {
-        $file_name = $this->getimg($link, $dir);
-        ob_flush();
-        flush();
+        $file_name = [];
+        if (is_array($link)){
+            foreach ($link as $_v){
+                $file_name[] = $this->getimg($_v, $dir);
+                ob_flush();
+                flush();
+            }
+        }else {
+            $file_name[] = $this->getimg($link, $dir);
+            ob_flush();
+            flush();
+        }
         return $file_name;
     }
     
