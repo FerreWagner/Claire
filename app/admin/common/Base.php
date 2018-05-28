@@ -13,17 +13,6 @@ class Base extends Controller
     public function _initialize()
     {
         set_time_limit(0);
-        //test querylist
-//         $rules = ['img' => ['img', 'src']];
-//         $img_d = QueryList::Query('http://www.shuaigetu.net/', $rules);
-//         $img_d = $img_d->data;
-//         $fake = [];
-//         foreach ($img_d as $k => $v){
-//             $url = 'http://www.shuaigetu.net'.$v['img'];
-//             $this->getimg($url, 'sg');
-//             ob_flush();
-//         }
-//         die;
 
         parent::_initialize();
         
@@ -73,7 +62,7 @@ class Base extends Controller
 
         $ext = strrchr($url, '.');
         //     echo $ext;die;
-        if ($ext != '.gif' && $ext != '.jpg') {
+        if ($ext != '.gif' && $ext != '.jpg' && $ext != '.png') {
             return false;
         }
         //判断路经是否存在
