@@ -13,7 +13,20 @@ class Index extends Common
         ]);
         return $this->view->fetch('index');
     }
-    
+
+    public function single()
+    {
+        if (!empty(input('id'))){
+            $data = db('article')->field('thumb, title')->find(input('id'));
+            $this->view->assign([
+                'data' => $data,
+            ]);
+            return $this->view->fetch('index/single-page');
+        }else{
+            return $this->view->fetch('index');
+        }
+
+    }
     
     public function service()
     {
