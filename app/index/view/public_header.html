@@ -10,6 +10,9 @@
       <nav role="navigation" class="probootstrap-nav hidden-xs">
         <ul class="probootstrap-main-nav">
           <li class="active"><a href="/">Home</a></li>
+          {volist name="cate" id="category"}
+          	<li class="active"><a href="{:url('index/index', ['cateid' => $category['id']])}">{$category.catename}</a></li>
+          {/volist}
           <li><a href="{:url('index/index/contact')}">Contact</a></li>
         </ul>
         <div class="extra-text visible-xs"> 
