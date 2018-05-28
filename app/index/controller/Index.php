@@ -14,6 +14,10 @@ class Index extends Common
         return $this->view->fetch('index');
     }
 
+    /**
+     * 单页处理
+     * @return string
+     */
     public function single()
     {
         $id = input('id');
@@ -21,7 +25,7 @@ class Index extends Common
         
         if (!empty($id)){
             $data = db('article')->field('id, thumb, title')->find($id);
-            if (empty($data)) $data = db('article')->field('thumb, title')->find(1);
+            if (empty($data)) $data = db('article')->field('id, thumb, title')->find(1);
             
             $next = db('article')->field('id')->find($id + 1);
             $prev = db('article')->field('id')->find($id - 1);
@@ -41,14 +45,7 @@ class Index extends Common
 
     }
     
-    public function service()
-    {
-        return $this->view->fetch('index/services');
-    }
-    public function about()
-    {
-        return $this->view->fetch('index/about');
-    }
+    
     public function contact()
     {
         return $this->view->fetch('index/contact');
