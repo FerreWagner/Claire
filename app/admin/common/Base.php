@@ -69,9 +69,8 @@ class Base extends Controller
     }
     
     public function getimg($url, $filepath) {
-        if ($url == '') {
-            return false;
-        }
+        if ($url == '') return false;
+
         $ext = strrchr($url, '.');
         //     echo $ext;die;
         if ($ext != '.gif' && $ext != '.jpg' && $ext != '.png') {
@@ -92,7 +91,10 @@ class Base extends Controller
         fclose($fp);
 //         return '/'.$filepath.'/'.$filename;
 //         F:\xampp\tmp\phpBA3C.tmp
-        return ROOT_PATH . 'public' . DS . 'uploads' . DS . $filepath . DS . $filename;
+//        return 'E:/programinstall/xampp/htdocs/Claire/public/uploads/'.$filepath.'/'.$filename;
+        return ROOT_PATH . 'public' . DS . $filepath . DS . $filename;
+
+//        return ROOT_PATH . 'public' . DS . 'uploads' . DS . $filepath . DS . $filename;
     }
     
     public function fetch_url_page_contents($url){

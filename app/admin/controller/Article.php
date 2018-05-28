@@ -2,6 +2,8 @@
 
 namespace app\admin\controller;
 
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 use QL\QueryList;
 use think\Request;
 use app\admin\common\Base;
@@ -10,8 +12,6 @@ use app\admin\model\Article as ArticleModel;
 use think\Validate;
 use function GuzzleHttp\Promise\all;
 use function QL\html;
-use Qiniu\Auth;
-use Qiniu\Storage\UploadManager;
 
 class Article extends Base
 {
@@ -426,13 +426,15 @@ class Article extends Base
                     foreach ($total_img as $_value){
                         $see       = random_int(60, 2000);
                         $real_name = $this->downLoadPic($total_img, 'fake');
-                        $this->qiniuSet($real_name);
-                        
+
+                        $thumb     = 'http://'.$this->qiniuSet($real_name);
+
                         $sql_data  = [
                             'cate'   => $cate,
                             'author' => 'internet',
                             'title'  => $title,
                             'order'  => $order,
+                            'thumb'  => $thumb,
                             'see'    => $see,
                             'pic'    => $_value,
                             'time'   => time(),
@@ -442,13 +444,15 @@ class Article extends Base
                 }else { //单张图
                     $see       = random_int(60, 2000);
                     $real_name = $this->downLoadPic($total_img, 'fake');
-                    $this->qiniuSet($real_name);
-                    
+
+                    $thumb     = 'http://'.$this->qiniuSet($real_name);
+
                     $sql_data  = [
                         'cate'   => $cate,
                         'title'  => $title,
                         'author' => 'internet',
                         'order'  => $order,
+                        'thumb'  => $thumb,
                         'see'    => $see,
                         'pic'    => $total_img,
                         'time'   => time(),
@@ -552,11 +556,17 @@ class Article extends Base
         return $file_name;
     }
     
-    public function qiniuSet($file_path)
+
+    /**
+     * 上传qiniu
+     * @param unknown $filePath
+     */
+    public function qiniuSet($filePath)
     {
-        $ext = explode('.', $file_path)[1];
+        //获取后缀
+        $ext = explode('.', $filePath)[1];
         //上传到七牛后保存的文件名(加盐)
-        $key = config('qiniu.salt').substr(md5($file_path) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
+        $key = config('qiniu.salt').substr(md5($filePath) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
         //构建鉴权对象
         $auth = new Auth(config('qiniu.ak'), config('qiniu.sk'));
         //要上传的空间
@@ -564,9 +574,15 @@ class Article extends Base
         //初始化uploadmanager对象并进行文件的上传
         $uploadMgr = new UploadManager();
         //调用uploadmanager的putfile方法进行文件的上传
-        list($ret, $err) = $uploadMgr->putFile($token, $key, $file_path);
+        list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
         $_data['pic']    = config('qiniu.domain').'/'.$ret['key'];
         $err ? $_data['thumb'] = '图片上传失败' : $_data['thumb'] = config('qiniu.domain').'/'.$ret['key'];
+
+        //上传后删除本地图片
+        if (file_exists($filePath)) @unlink($filePath);
+        return $_data['thumb'];
+//        E:\programinstall\xampp\tmp\php52B.tmp
+//        E:\programinstall\xampp\htdocs\Claire\public\uploads\fake\2018-05-26-23-36-21-374.jpg
     }
 
 
