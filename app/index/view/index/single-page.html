@@ -30,7 +30,7 @@
 		          	{$data['title']}
 		          <span style="font-size: 14px;margin-left: 30px;"><a href="{:url('index/single', ['id' => $next['id']])}">下一页</a></span>
 	          </h2>
-          <p>Posted  on September 3, 2017</p>
+          <p>{$data['time']|date="Y/m/d",###}</p>
         </div>
         <div style="text-align: center">
           <img src="{$data['thumb']}-1664" />

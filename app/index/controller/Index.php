@@ -17,9 +17,9 @@ class Index extends Common
     
     public function index()
     {
-        $result = db('article')->field('id, title, cate, see, thumb')->order('time', 'desc')->paginate(7);
+        $result = db('article')->field('id, title, see, thumb')->order('time', 'desc')->paginate(10);
         if (input('cateid')){
-            $result = db('article')->field('id, title, cate, see, thumb')->where('cate', input('cateid'))->paginate(7);
+            $result = db('article')->field('id, title, see, thumb')->order('time', 'desc')->where('cate', input('cateid'))->paginate(10);
         }
         
         $this->view->assign([
@@ -38,10 +38,11 @@ class Index extends Common
     {
         $id = input('id');
         if (!is_numeric($id) || $id <= 0) $id = 1;
-        
+        db('article')->where('id', $id)->setInc('see');
+
         if (!empty($id)){
-            $data = db('article')->field('id, thumb, title')->find($id);
-            if (empty($data)) $data = db('article')->field('id, thumb, title')->find(1);
+            $data = db('article')->field('id, thumb, title, time')->find($id);
+            if (empty($data)) $data = db('article')->field('id, thumb, title, time')->find(1);
             
             //页面初始化
             $next = db('article')->field('id')->find($id + 1);
