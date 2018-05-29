@@ -321,7 +321,7 @@ class Article extends Base
                 if (!empty($last_url)){
                     if (preg_match('|(\d+)|',$last_url,$r)) $last_page = $r[1];   //当last_url存在，则置换last_page的值,即循环体内只循环此页
                 }
-                
+
                 for ($page; $page < $last_page+1; $page ++)
                 {
                     //uumnt站 list循环抓取
@@ -330,7 +330,7 @@ class Article extends Base
                         if (strpos($item['href'], 'http') === false) return [$baseurl.$item['href'], $item['title']];
                         return [$item['href'], $item['title']];
                     });
-                    
+
                     $ql->destruct();
                     $result = $result->all();   //得到页面所有url&title
                     foreach ($result as $_value){
@@ -343,6 +343,7 @@ class Article extends Base
                     }else {
                         $first_url = preg_replace('|(\d+)|', ($page + 1), $first_url);
                     }
+
                     $html = file_get_contents($first_url);
 //                    $html = $this->fetch_url_page_contents($first_url);
                 }
