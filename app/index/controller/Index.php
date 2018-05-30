@@ -17,9 +17,9 @@ class Index extends Common
     
     public function index()
     {
-        $result = db('article')->field('id, title, see, thumb')->order('time', 'desc')->paginate(10);
+        $result = db('article')->field('id, title, see, thumb')->order('time', 'desc')->group('title')->paginate(10);
         if (input('cateid')){
-            $result = db('article')->field('id, title, see, thumb')->order('time', 'desc')->where('cate', input('cateid'))->paginate(10);
+            $result = db('article')->field('id, title, see, thumb')->order('time', 'desc')->group('title')->where('cate', input('cateid'))->paginate(10);
         }
         
         $this->view->assign([
