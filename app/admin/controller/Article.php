@@ -388,6 +388,8 @@ class Article extends Base
                     $html = $this->fetch_url_page_contents(substr($url, 0, -5).'_'.$deep.'.html');
                 }
 
+                $time = time();
+
                 //图片下载+qiniu+销毁+入库
                 if (count($total_img) > 1){ //多张图
                     foreach ($total_img as $_value){
@@ -399,10 +401,10 @@ class Article extends Base
                                 'author' => 'internet',
                                 'title'  => $title,
                                 'order'  => $order,
-                                'thumb'  => 'http://'.$this->qiniuSet($_v),
+                                'thumb'  => 'http://'.$this->qiniuSet($_v, $time),
                                 'see'    => random_int(60, 2000),
                                 'pic'    => $_value,
-                                'time'   => time(),
+                                'time'   => $time,
                             ];
                             db('article')->insert($sql_data);
                         }
@@ -415,10 +417,10 @@ class Article extends Base
                         'title'  => $title,
                         'author' => 'internet',
                         'order'  => $order,
-                        'thumb'  => 'http://'.$this->qiniuSet($real_name[0]),
+                        'thumb'  => 'http://'.$this->qiniuSet($real_name[0], $time),
                         'see'    => random_int(60, 2000),
                         'pic'    => $total_img,
-                        'time'   => time(),
+                        'time'   => $time,
                     ];
                     db('article')->insert($sql_data);
                 }
@@ -529,12 +531,12 @@ class Article extends Base
      * 上传qiniu
      * @param unknown $filePath
      */
-    public function qiniuSet($filePath)
+    public function qiniuSet($filePath, $time)
     {
         //获取后缀
         $ext = explode('.', $filePath)[1];
         //上传到七牛后保存的文件名(加盐)
-        $key = config('qiniu.salt').substr(md5($filePath) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
+        $key = config('qiniu.salt').$time.'_'.substr(md5($filePath) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
         //构建鉴权对象
         $auth = new Auth(config('qiniu.ak'), config('qiniu.sk'));
         //要上传的空间
