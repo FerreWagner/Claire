@@ -33,7 +33,7 @@
           <p>{$data['time']|date="Y/m/d",###}</p>
         </div>
         <div style="text-align: center">
-          <img src="{$data['thumb']}-1664" />
+          <a href="{:url('index/single', ['id' => $next['id']])}"><img src="{$data['thumb']}-1664" /></a>
         </div>
       </div>
 
