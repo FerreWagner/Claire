@@ -9,9 +9,11 @@ class Index extends Common
     {
         parent::_initialize();
         $cate   = db('category')->field('id, catename')->order('sort', 'desc')->select();
+        $sys    = db('system')->find(1);
         
         $this->view->assign([
             'cate'   => $cate,
+            'sys'    => $sys,
         ]);
     }
     
