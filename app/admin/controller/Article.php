@@ -231,61 +231,84 @@ class Article extends Base
      * 单页爬取
      * @return string
      */
-    public function singlePage()
+    public function singlePage(Request $request)
     {
-        if (request()->isPost()){
+        
+        
+        if ($request->isPost()){
+            $url   = $request->param('url');
+            $cate  = $request->param('cate');
+            $order = $request->param('order');
             
-            $form      = input();
-            $html      = $this->fetch_url_page_contents($form['url']);
+            if (strpos($url, 'uumnt')){
+                $_rule = '.center>a';
+            }
+            
+            $html      = file_get_contents($url);
+            //         $html = $this->fetch_url_page_contents($first_url);
+            
             $total_img = [];
             $deep      = 0;
             //首页不规则规则制定：UU美图：https://www.uumnt.cc/ https://www.uumnt.cc/dongwu/17089.html https://www.uumnt.cc/dongwu/17089_2.html
             while (strpos($html, '<head><title>404 Not Found</title></head>') === false){
-                if (strpos($form['url'], 'uumnt') !== false){
-                    $ql     = QueryList::html($html)->rules(['img' => ['img', 'src']])->range('.center>a');
-                    $result = $ql->query()->getData();
-                    $_arr   = $result->all();
-                    $ql->destruct();    //释放资源
-                    
-                    if (count($_arr) > 1){  //每页多图
-                        foreach ($_arr as $_v){
-                            $total_img[] = $_v['img'];  
-                        }
-                    }else { //每页单图
-                        $total_img = $_arr[0]['img'];
+                //             if (strpos($url, 'uumnt') !== false){
+                $ql     = QueryList::html($html)->rules(['img' => ['img', 'src']])->range($_rule);
+                $result = $ql->query()->getData();
+                $_arr   = $result->all();
+                $ql->destruct();
+            
+                if (count($_arr) > 1){  //每页多图
+                    foreach ($_arr as $_v){
+                        //优化方法,原方法：$total_img = array_values(array_merge($_v, $total_img));
+                        $total_img[] = $_v['img'];
                     }
-                    
+                }else {                 //每页单图
+                    $total_img = $_arr[0]['img'];
+                }
+            
+                if (strpos($url, 'uumnt')){
                     $deep = $deep == 0 ? $deep + 2 : $deep + 1;
-                    $html = $this->fetch_url_page_contents(substr($form['url'], 0, -5).'_'.$deep.'.html');
-                    
-                    if (count($total_img) > 1){ //多张图
-                        foreach ($total_img as $_value){
+                    $html = $this->fetch_url_page_contents(substr($url, 0, -5).'_'.$deep.'.html');
+                }
+            
+                $time = time();
+            
+                //图片下载+qiniu+销毁+入库
+                if (count($total_img) > 1){ //多张图
+                    foreach ($total_img as $_value){
+                        $real_name = $this->downLoadPic($total_img, 'fake');
+            
+                        foreach ($real_name as $_v){
                             $sql_data  = [
-                                'cate'   => $form['cate'],
+                                'cate'   => $cate,
                                 'author' => 'internet',
-                                'order'  => $form['order'],
+                                'order'  => $order,
+                                'thumb'  => 'http://'.$this->qiniuSet($_v, $time),
                                 'see'    => random_int(60, 2000),
                                 'pic'    => $_value,
-                                'time'   => time(),
+                                'time'   => $time,
                             ];
                             db('article')->insert($sql_data);
                         }
-                    }else { //单张图
-                        $sql_data  = [
-                            'cate'   => $form['cate'],
-                            'author' => 'internet',
-                            'order'  => $form['order'],
-                            'see'    => random_int(60, 2000),
-                            'pic'    => $total_img,
-                            'time'   => time(),
-                        ];
-                        db('article')->insert($sql_data);
                     }
-                    $total_img = [];
-                    
+                }else { //单张图
+                    $real_name = $this->downLoadPic($total_img, 'fake');
+            
+                    $sql_data  = [
+                        'cate'   => $cate,
+                        'author' => 'internet',
+                        'order'  => $order,
+                        'thumb'  => 'http://'.$this->qiniuSet($real_name[0], $time),
+                        'see'    => random_int(60, 2000),
+                        'pic'    => $total_img,
+                        'time'   => $time,
+                    ];
+                    db('article')->insert($sql_data);
                 }
+                $total_img = [];
+            
+                //             }
             }
-        
         }
         $cate = db('category')->field(['id', 'catename'])->order('sort', 'asc')->select();
         return $this->view->fetch('article-do-single', ['cate' => $cate]);
