@@ -122,7 +122,7 @@ class Article extends Base
         $type    = ArticleModel::getSystem()['type'];   //缩略图type
         
         //当然这里只是做简略处理，为了不让article表性能变低，我们将type字段分离到system表，如果在三方服务器和本地均存有图片，那么我们可以通过判断路径名来确定是否添加http://这样的完整路径
-        $article['thumb'] = $type == 0 ? $article['thumb'] : 'http://'.$article['thumb'];
+        $article['thumb'] = ($type == 0 || empty($article['content'])) ? $article['thumb'] : 'http://'.$article['thumb'];
         $this->assign(['cate' => $cate, 'article' => $article]);
         return $this->view->fetch('article-edit');
     }
