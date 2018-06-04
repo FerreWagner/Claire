@@ -285,6 +285,7 @@ class Article extends Base
                                 'order'  => $order,
                                 'thumb'  => 'http://'.$this->qiniuSet($_v, $time),
                                 'see'    => random_int(60, 2000),
+                                'title'  => $cate.date("Y/m/d/H"),
                                 'pic'    => $_value,
                                 'time'   => $time,
                             ];
@@ -300,6 +301,7 @@ class Article extends Base
                         'order'  => $order,
                         'thumb'  => 'http://'.$this->qiniuSet($real_name[0], $time),
                         'see'    => random_int(60, 2000),
+                        'title'  => $cate.date("Y/m/d/H"),
                         'pic'    => $total_img,
                         'time'   => $time,
                     ];
