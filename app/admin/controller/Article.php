@@ -424,7 +424,8 @@ class Article extends Base
                                 'author' => 'internet',
                                 'title'  => $title,
                                 'order'  => $order,
-                                'thumb'  => 'http://'.$this->qiniuSet($_v, $time),
+//                                 'thumb'  => 'http://'.$this->qiniuSet($_v, $time),
+                                'thumb'  => '1',
                                 'see'    => random_int(60, 2000),
                                 'pic'    => $_value,
                                 'time'   => $time,
@@ -440,7 +441,8 @@ class Article extends Base
                         'title'  => $title,
                         'author' => 'internet',
                         'order'  => $order,
-                        'thumb'  => 'http://'.$this->qiniuSet($real_name[0], $time),
+//                         'thumb'  => 'http://'.$this->qiniuSet($real_name[0], $time),
+                        'thumb'  => '1',
                         'see'    => random_int(60, 2000),
                         'pic'    => $total_img,
                         'time'   => $time,
@@ -537,16 +539,42 @@ class Article extends Base
         $file_name = [];
         if (is_array($link)){
             foreach ($link as $_v){
-                $file_name[] = $this->getimg($_v, $dir);
+                $file_name[] = $this->getimg1($_v, $dir);
                 ob_flush();
                 flush();
             }
         }else {
-            $file_name[] = $this->getimg($link, $dir);
+            $file_name[] = $this->getimg1($link, $dir);
             ob_flush();
             flush();
         }
         return $file_name;
+    }
+    
+    public function getimg1($url, $filepath)
+    {
+        if ($url == '') return false;
+        
+        $ext = strrchr($url, '.');
+        if ($ext != '.gif' && $ext != '.jpg' && $ext != '.png') return false;
+        
+        //判断路经是否存在
+        !is_dir($filepath) ? mkdir($filepath) : null;
+        
+        //获得随机的图片名，并加上后辍名
+        $filetime = time();
+        $filename = date("Y-m-d-H-i-s", $filetime).'-'.rand(100,999).'.'.substr($url,-3,3);
+        
+        $remote_fp = fopen($url,'rb');
+//         $fp = @fopen($filepath.'/'.$filename, 'a');
+        $local_fp = fopen($filepath.'/'.$filename, 'wb');
+        
+        while(!feof($remote_fp)){
+            fwrite($local_fp,fread($remote_fp,128));
+        }
+        fclose($remote_fp);
+        fclose($local_fp);
+        return ROOT_PATH . 'public' . DS . $filepath . DS . $filename;
     }
     
 
