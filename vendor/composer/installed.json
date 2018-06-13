@@ -827,5 +827,40 @@
             "phpQuery",
             "spider"
         ]
+    },
+    {
+        "name": "wxkxklmyt/pscws4",
+        "version": "0.0.2",
+        "version_normalized": "0.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/wxkxklmyt/pscws4.git",
+            "reference": "b81e40fb8b5427eb5ed410f1e0f6adaaaa660b3f"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/wxkxklmyt/pscws4/b81e40fb8b5427eb5ed410f1e0f6adaaaa660b3f.zip",
+            "reference": "b81e40fb8b5427eb5ed410f1e0f6adaaaa660b3f",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "time": "2017-12-22T08:56:36+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "wxkxklmyt\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "authors": [
+            {
+                "name": "我的梦",
+                "email": "519468341@qq.com"
+            }
+        ],
+        "description": "基于PSCWS4的中文分词工具"
     }
 ]
