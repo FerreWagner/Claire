@@ -19,6 +19,10 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
     );
 
     public static $prefixLengthsPsr4 = array (
+        'w' => 
+        array (
+            'wxkxklmyt\\' => 10,
+        ),
         't' => 
         array (
             'think\\composer\\' => 15,
@@ -57,6 +61,10 @@ class ComposerStaticInit28e2e705673cb243a32176ec44cda99e
     );
 
     public static $prefixDirsPsr4 = array (
+        'wxkxklmyt\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wxkxklmyt/pscws4/src',
+        ),
         'think\\composer\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-installer/src',
