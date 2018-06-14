@@ -3,9 +3,15 @@ namespace app\analysis;
 
 use think\Controller;
 use QL\QueryList;
+
 //公共方法类
 class Common extends Controller
 {
+    /**
+     * 返回website文本信息
+     * @param unknown $url
+     * @param array $rule
+     */
     public function getWebData($url, $rule = ['title' => ['', 'text'],])
     {
         $ql       = QueryList::html($this->fetch_url_page_contents($url))->rules($rule);
@@ -17,10 +23,11 @@ class Common extends Controller
         return $detail_data;
     }
     
-    
-    
-    
-    
+    /**
+     * 构造CURL
+     * @param unknown $url
+     * @return mixed
+     */
     public function fetch_url_page_contents($url){
         $ch = curl_init();
         if (is_numeric(strpos($url, 'https'))){
