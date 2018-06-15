@@ -9,6 +9,8 @@ class Index extends Common
     //function: 1、提取生成词频前n个(var:词汇、数量、词重);
     public function index()
     {
+        return $this->view->fetch('index');
+        
         $this->pic();
         
         //表单 验证
