@@ -28,8 +28,10 @@ class Scws{
         $scws -> set_rule(PATH . '/lib/rules.utf8.ini');
         $scws -> set_ignore(true);
         $scws -> send_text($text);
-        $words = $scws -> get_tops(5);
+        // 返回的数组元素是一个词, 它又包含: word 词本身, weight 词重, times 次数, attr 词性
+        $words = $scws -> get_tops($number);
         $scws -> close();
+        return $words;
         
         $tags = [];
         foreach($words as $k => $val){
