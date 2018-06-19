@@ -3,6 +3,7 @@ namespace app\analysis\controller;
 
 use app\analysis\Common;
 use wxkxklmyt\Scws;
+use think\Request;
 
 class Index extends Common
 {
@@ -29,24 +30,33 @@ class Index extends Common
         return $this->view->fetch('index');
     }
     
-    public function programme3()
+    public function programme3(Request $request)
     {
         
-        if (request()->isPost()){
+        if ($request->isPost()){
             //表单 验证
+            $form = $request->param();
+            if (empty($form['url']) || empty($form['time'])) $this->error('表单数据未填写完整,请重新填写');
             
-            $url  = 'http://heater.fsociaty.com';
-            $time = is_numeric(20) ? 20 : 40;   //分词数
+            $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
+            $url  = $form['url'];
             if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
             
-            
-            
             //输出
-            $article = $this->getWebData($url);
-            $scws = new Scws();
-            $devid = $scws->scws($article, $time, true);
+            $article = $this->getWebData($form['url']);
+            $scws    = new Scws();
+            $devid   = $scws->scws($article, $time, true);
             
-            halt($devid);
+            $count   = count($devid);
+            $string  = '';
+            foreach ($devid as $_k => $_v){
+                for ($i = 0; $i < $count; $i ++){
+                    $string .= $_v['word'].' ';
+                }
+                $count --;
+            }
+            if (empty($devid)) $this->error('该站点存在错误');
+            return $this->view->fetch('program3-end', ['string' => $string]);
         }
         
         return $this->view->fetch('program3');

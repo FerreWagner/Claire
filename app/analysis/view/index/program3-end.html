@@ -18,7 +18,7 @@
 			<div class="w3l_form">
 				<div class="left_grid_info">
 					<h3>Welcome !</h3>
-					<h4>该项目免费开源.如果您想请我喝一杯咖啡,请点击此处,Thanks.</h4>
+					<h4>复制分词并 <a href="https://www.jasondavies.com/wordcloud/" style="color: #fff;" target="_blank">在此</a> 生成标签云</h4>
 					<p> 我们正在组建自己的团队,如果你想联系我或有更好的意见和建议,欢迎点击下面的图标联系我.</p>
 					<ul class="social_section_1info">
 						<li><a href="#" class="w3_facebook"><i class="fa fa-github"></i></a></li>
@@ -28,19 +28,19 @@
 				</div>
 			</div>
 			<div class="w3_info">
-				<h2>Data Analysis</h2>
+			<script>
+			function copyUrl2()
+			{
+			    var target=document.getElementById("anyInput");
+			    target.select(); // 选择文本
+			    document.execCommand("Copy"); // 执行浏览器复制命令
+			    alert("复制成功");
+			}
+			</script>
+				<h2>生成网站分词后在此生成标签云：<a href="https://www.jasondavies.com/wordcloud/" target="_blank" style="color: #7583ec;">入口</a></h2>
 				<p>Url . Number Of Words</p>
-						<form action="" method="post">
-						<div class="input-group">
-							<span><i class="fa fa-link" aria-hidden="true" style="color: #01cd74"></i></span>
-							<input type="text" placeholder="设置提取网站地址" name="url" required=""> 
-						</div>
-						<div class="input-group">
-							<span><i class="fa fa-user" aria-hidden="true"></i></span>
-							<input type="text" placeholder="设置提取网站分词数量" name="time" required=""> 
-						</div>
-							<button class="btn btn-danger btn-block" type="submit">Analysis</button >                
-					</form>
+						<textarea cols="70" rows="10" type="textarea" id="anyInput" style="color: #777;font-family: 微软雅黑;">{$string}</textarea>
+						<button type="button" class="btn btn-danger btn-block" onClick="copyUrl2()" value="点击复制代码">复制</button>
 			</div>
 			<div class="clear"></div>
 			</div>
