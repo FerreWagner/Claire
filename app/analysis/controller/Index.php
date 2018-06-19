@@ -9,6 +9,7 @@ class Index extends Common
     //function: 1、提取生成词频前n个(var:词汇、数量、词重);
     public function index()
     {
+        $this->dlfileftxt('', '你好世界');die; //https://blog.csdn.net/oQiWei1/article/details/62432315
         return $this->view->fetch('index');
         
         $this->pic();
@@ -52,6 +53,25 @@ class Index extends Common
         }
         
         return $this->view->fetch('program2');
+    }
+    
+    public function dlfileftxt($data = array(),$filename = "unknown") {
+        header("Content-type:application/octet-stream");
+        header("Accept-Ranges:bytes");
+        header("Content-Disposition:attachment;filename=$filename.txt");
+        header("Expires:0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0 ");
+        header("Pragma:public");
+        if (!empty($data)){
+            foreach($data as $key=>$val){
+                foreach ($val as $ck => $cv) {
+                    $data[$key][$ck]=iconv("UTF-8", "GB2312", $cv);
+                }
+                $data[$key]=implode(" ", $data[$key]);
+            }
+            echo implode("\n",$data);
+        }
+        exit();
     }
     
     /**
