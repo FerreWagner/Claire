@@ -3,6 +3,7 @@ namespace app\analysis;
 
 use think\Controller;
 use QL\QueryList;
+use wxkxklmyt\Scws;
 
 //公共方法类
 class Common extends Controller
@@ -46,5 +47,12 @@ class Common extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
         return $result;
+    }
+    
+    public function analysisWeb($url, $time)
+    {
+        $article = $this->getWebData($url);
+        $scws = new Scws();
+        return $scws->scws($article, $time, true);
     }
 }
