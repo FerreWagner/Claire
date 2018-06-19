@@ -49,6 +49,12 @@ class Common extends Controller
         return $result;
     }
     
+    /**
+     * 得到分词数据
+     * @param unknown $url
+     * @param unknown $time
+     * @return string
+     */
     public function analysisWeb($url, $time)
     {
         $article = $this->getWebData($url);

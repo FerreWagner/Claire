@@ -40,16 +40,15 @@ class Index extends Common
             
             //分析
             $devid   = $this->analysisWeb($url, $time);
-            $count   = count($devid);
-            $string  = '';
+            $string  = $times = $weight = [];
             foreach ($devid as $_k => $_v){
-                for ($i = 0; $i < $count; $i ++){
-                    $string .= $_v['word'].' ';
-                }
-                $count --;
+                $string[] = $_v['word'];
+                $times[]  = $_v['times'];
+                $weight[] = $_v['weight'];
             }
-            if (empty($devid)) $this->error('该站点存在错误');
-            return $this->view->fetch('program2-end', ['string' => $string]);
+            //做devid数据为空判断 TODO
+            halt($weight);
+//             return $this->view->fetch('program2-end', ['string' => $string]);
         }
         
         return $this->view->fetch('program2');
