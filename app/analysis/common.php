@@ -79,4 +79,13 @@ class Common extends Controller
         empty($form) ? $this->error('表单数据未填写完整,请重新填写') : $form = trim($form);
     }
     
+    /**
+     * url check
+     * @param unknown $url
+     */
+    public function urlFormatCheck($url)
+    {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+    }
+    
 }

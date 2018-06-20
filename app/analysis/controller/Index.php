@@ -6,7 +6,9 @@ use think\Request;
 
 class Index extends Common
 {
-    //function: 1、提取生成词频前n个(var:词汇、数量、词重);
+    /**
+     * index page
+     */
     public function index()
     {
         return $this->view->fetch('index');
@@ -15,6 +17,11 @@ class Index extends Common
         return $this->view->fetch('index');
     }
     
+    /**
+     * 方案1 TODO
+     * @param Request $request
+     * @return string
+     */
     public function programme1(Request $request)
     {
     
@@ -22,10 +29,11 @@ class Index extends Common
             //表单 验证
             $form = $request->param();
             $this->formEmptyCheck($form);
-            //表单数据初始化
+            
+            //数据初始化
             $time = is_numeric($form['time']) ? $form['time'] : 40;
             $url  = $form['url'];
-            if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+            $this->urlFormatCheck($url);
     
             //分析
             $devid   = $this->analysisWeb($url, $time);
@@ -59,7 +67,7 @@ class Index extends Common
             $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
             $url  = $form['url'];
             $cate = $form['cate'];
-            if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+            $this->urlFormatCheck($url);
             
             switch ($cate)
             {
@@ -107,9 +115,10 @@ class Index extends Common
             $form = $request->param();
             $this->formEmptyCheck($form);
             
-            $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
+            //数据初始化
+            $time = is_numeric($form['time']) ? $form['time'] : 40;
             $url  = $form['url'];
-            if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+            $this->urlFormatCheck($url);
             
             //分析
             $devid   = $this->analysisWeb($url, $time);
