@@ -10,8 +10,6 @@ class Index extends Common
     public function index()
     {
         
-        $txt_data = [['分词', '次数', '权重'],['heater', '20', '30.654554444'],['Ferre', '22', '30.654554444']];
-//         $this->dlfileftxt($txt_data, 'ferre_'.time());die; //https://blog.csdn.net/oQiWei1/article/details/62432315
         return $this->view->fetch('index');
         
         $this->pic();
@@ -28,6 +26,36 @@ class Index extends Common
         
         halt($devid);
         return $this->view->fetch('index');
+    }
+    
+    public function programme1(Request $request)
+    {
+    
+        if ($request->isPost()){
+            //表单 验证
+            $form = $request->param();
+            halt($form['bg_color']);
+            if (empty($form['url']) || empty($form['time'])) $this->error('表单数据未填写完整,请重新填写');
+    
+            $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
+            $url  = $form['url'];
+            if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+    
+            //分析
+            $devid   = $this->analysisWeb($url, $time);
+            $count   = count($devid);
+            $string  = '';
+            foreach ($devid as $_k => $_v){
+                for ($i = 0; $i < $count; $i ++){
+                    $string .= $_v['word'].' ';
+                }
+                $count --;
+            }
+            if (empty($devid)) $this->error('该站点存在错误');
+            return $this->view->fetch('program1-end', ['string' => $string]);
+        }
+    
+        return $this->view->fetch('program1');
     }
     
     /**
@@ -80,29 +108,6 @@ class Index extends Common
         return $this->view->fetch('program2');
     }
     
-    /**
-     * 生成txt权重文档
-     * @param array $data
-     * @param string $filename
-     */
-    public function dlfileftxt($data = array(),$filename = "unknown", $cate) {
-        header("Content-type:application/octet-stream");
-        header("Accept-Ranges:bytes");
-        header("Content-Disposition:attachment;filename=$filename.$cate");
-        header("Expires:0");
-        header("Cache-Control:must-revalidate,post-check=0,pre-check=0 ");
-        header("Pragma:public");
-        if (!empty($data)){
-            foreach($data as $key=>$val){
-                foreach ($val as $ck => $cv) {
-                    $data[$key][$ck]=iconv("UTF-8", "GB2312", $cv);
-                }
-                $data[$key]=implode("\t\t", $data[$key]);
-            }
-            echo implode("\r\n",$data);
-        }
-        exit();
-    }
     
     /**
      * 方案3
@@ -187,6 +192,30 @@ class Index extends Common
         }
         
         imagedestroy($im);die;
+    }
+    
+    /**
+     * 生成txt权重文档
+     * @param array $data
+     * @param string $filename
+     */
+    public function dlfileftxt($data = array(),$filename = "unknown", $cate) {
+        header("Content-type:application/octet-stream");
+        header("Accept-Ranges:bytes");
+        header("Content-Disposition:attachment;filename=$filename.$cate");
+        header("Expires:0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0 ");
+        header("Pragma:public");
+        if (!empty($data)){
+            foreach($data as $key=>$val){
+                foreach ($val as $ck => $cv) {
+                    $data[$key][$ck]=iconv("UTF-8", "GB2312", $cv);
+                }
+                $data[$key]=implode("\t\t", $data[$key]);
+            }
+            echo implode("\r\n",$data);
+        }
+        exit();
     }
     
 

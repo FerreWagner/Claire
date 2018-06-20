@@ -8,6 +8,9 @@
 <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
 <link href="__ROOT__/static/analysis-index/css/style.css" rel="stylesheet" type="text/css" media="all"/>
 <link href="http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900" rel="stylesheet">
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<script src="__ROOT__/static/analysis-index/js/colpick.js" type="text/javascript"></script>
+<link rel="stylesheet" href="__ROOT__/static/analysis-index/css/colpick.css" type="text/css"/>
 </head>
 <body>
 <div class="signupform">
@@ -19,7 +22,7 @@
 				<div class="left_grid_info">
 					<h3>Welcome !</h3>
 					<h4>该项目基于SCWS分词系统&QueryList库,免费开源.</h4>
-					<p> 我们正在组建自己的团队,如果你有更好的意见和建议/有私人的定制需求,欢迎点击下面的图标联系我.</p>
+					<p> 我们正在组建自己的团队,如果你想联系我或有更好的意见和建议/有私人的定制需求,欢迎点击下面的图标联系我.</p>
 					<ul class="social_section_1info">
 						<li><a href="#" class="w3_facebook"><i class="fa fa-github"></i></a></li>
 						<li><a href="https://weibo.com/u/3877828291" target="_blank" class="w3_twitter"><i class="fa fa-weibo"></i></a></li>
@@ -37,18 +40,40 @@
 						</div>
 						<div class="input-group">
 							<span><i class="fa fa-user" aria-hidden="true"></i></span>
-							<input type="text" placeholder="设置提取网站分词数量,默认40" name="time" required=""> 
+							<input type="text" placeholder="设置提取网站分词数量" name="time" required=""> 
 						</div>
-						    <label class="radio-inline">
-						        <input type="radio" name="cate" value="1" checked> <span style="margin-right: 40px;">Txt</span>
+						生成图片格式：
+						    <label class="radio-inline" style="cursor: pointer;">
+						        <input type="radio" name="ext" value="1" checked> <span style="margin-right: 40px;">Jpg</span>
 						    </label>
-						    <label class="radio-inline">
-						        <input type="radio" name="cate" value="2"> <span style="margin-right: 40px;">Word</span>
+						    <label class="radio-inline" style="cursor: pointer;">
+						        <input type="radio" name="ext" value="2"> <span style="margin-right: 40px;">Png</span>
 						    </label>
-						    <label class="radio-inline">
-						        <input type="radio" name="cate" value="3"> Excel
-						    </label>						    							
-				    <button class="btn btn-danger btn-block" type="submit">生成权重文档</button >                
+						    <label class="radio-inline" style="cursor: pointer;">
+						        <input type="radio" name="ext" value="3"> Gif
+						    </label>	
+   						<div class="input-group" style="margin-top: 20px;">
+							<input type="text" placeholder="字体大小" name="font" required=""> px
+						</div>
+   						<div class="input-group" style="margin-top: 20px;">
+							<input type="text" placeholder="图片长" name="pic_width" required=""> px
+							<input type="text" placeholder="图片宽" name="pic_heght" required=""> px
+						</div>
+   						<div class="input-group" style="margin-top: 20px;">
+   						<input type="hidden" name="bg_color" id="bg_color" value="">
+							背景色：<div id="picker"></div>
+							<script>
+							$('#picker').colpick({
+							    flat:true,
+							    layout:'rgbhex',	//or rgb
+							    submit:0,
+							    onChange: function (hsb, hex, rgb, el, bySetColor) {
+							    	$("#bg_color").attr("value",[rgb.r,rgb.g,rgb.b]);
+							    }
+							  });
+							</script>
+						</div>
+							<button class="btn btn-danger btn-block" type="submit">开始分析</button >                
 					</form>
 			</div>
 			<div class="clear"></div>
