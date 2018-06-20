@@ -9,22 +9,9 @@ class Index extends Common
     //function: 1、提取生成词频前n个(var:词汇、数量、词重);
     public function index()
     {
-        
         return $this->view->fetch('index');
         
         $this->pic();
-        
-        //表单 验证
-        $url  = 'http://heater.fsociaty.com';
-        $time = is_numeric(20) ? 20 : 40;
-        if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
-        
-        
-        
-        //分析
-        $devid   = $this->analysisWeb($url, $time);
-        
-        halt($devid);
         return $this->view->fetch('index');
     }
     
@@ -34,10 +21,9 @@ class Index extends Common
         if ($request->isPost()){
             //表单 验证
             $form = $request->param();
-            halt($form['bg_color']);
-            if (empty($form['url']) || empty($form['time'])) $this->error('表单数据未填写完整,请重新填写');
-    
-            $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
+            $this->formEmptyCheck($form);
+            //表单数据初始化
+            $time = is_numeric($form['time']) ? $form['time'] : 40;
             $url  = $form['url'];
             if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
     
@@ -68,7 +54,7 @@ class Index extends Common
         if ($request->isPost()){
             //表单 验证
             $form = $request->param();
-            if (empty($form['url']) || empty($form['time']) || empty($form['cate'])) $this->error('表单数据未填写完整,请重新填写');
+            $this->formEmptyCheck($form);
         
             $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
             $url  = $form['url'];
@@ -99,9 +85,8 @@ class Index extends Common
             foreach ($devid as $_k => $_v){
                 $txt_data[] = [$_v['word'], $_v['times'], $_v['weight']];
             }
-            
+            //生成文档
             $this->dlfileftxt($txt_data, 'ferre_'.time(), $cate); //https://blog.csdn.net/oQiWei1/article/details/62432315
-            
             return $this->view->fetch('program2-end');
         }
         
@@ -120,7 +105,7 @@ class Index extends Common
         if ($request->isPost()){
             //表单 验证
             $form = $request->param();
-            if (empty($form['url']) || empty($form['time'])) $this->error('表单数据未填写完整,请重新填写');
+            $this->formEmptyCheck($form);
             
             $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
             $url  = $form['url'];
