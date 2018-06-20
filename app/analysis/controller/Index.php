@@ -9,7 +9,9 @@ class Index extends Common
     //function: 1、提取生成词频前n个(var:词汇、数量、词重);
     public function index()
     {
-        $this->dlfileftxt('', '你好世界');die; //https://blog.csdn.net/oQiWei1/article/details/62432315
+        
+        $txt_data = [['分词', '次数', '权重'],['heater', '20', '30.654554444'],['Ferre', '22', '30.654554444']];
+//         $this->dlfileftxt($txt_data, 'ferre_'.time());die; //https://blog.csdn.net/oQiWei1/article/details/62432315
         return $this->view->fetch('index');
         
         $this->pic();
@@ -40,21 +42,27 @@ class Index extends Common
             if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
             
             //分析
-            $devid   = $this->analysisWeb($url, $time);
-            $string  = $times = $weight = [];
+            $devid    = $this->analysisWeb($url, $time);
+            if (empty($devid)) $this->error('该站点存在错误');
+            $txt_data = [['分词', '次数', '权重']];   //初始化
+            
             foreach ($devid as $_k => $_v){
-                $string[] = $_v['word'];
-                $times[]  = $_v['times'];
-                $weight[] = $_v['weight'];
+                $txt_data[] = [$_v['word'], $_v['times'], $_v['weight']];
             }
-            //做devid数据为空判断 TODO
-            halt($weight);
-//             return $this->view->fetch('program2-end', ['string' => $string]);
+            
+            $this->dlfileftxt($txt_data, 'ferre_'.time()); //https://blog.csdn.net/oQiWei1/article/details/62432315
+            
+            return $this->view->fetch('program2-end');
         }
         
         return $this->view->fetch('program2');
     }
     
+    /**
+     * 生成txt权重文档
+     * @param array $data
+     * @param string $filename
+     */
     public function dlfileftxt($data = array(),$filename = "unknown") {
         header("Content-type:application/octet-stream");
         header("Accept-Ranges:bytes");
@@ -67,9 +75,9 @@ class Index extends Common
                 foreach ($val as $ck => $cv) {
                     $data[$key][$ck]=iconv("UTF-8", "GB2312", $cv);
                 }
-                $data[$key]=implode(" ", $data[$key]);
+                $data[$key]=implode("\t\t", $data[$key]);
             }
-            echo implode("\n",$data);
+            echo implode("\r\n",$data);
         }
         exit();
     }
