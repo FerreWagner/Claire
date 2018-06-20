@@ -30,16 +30,38 @@ class Index extends Common
         return $this->view->fetch('index');
     }
     
+    /**
+     * 方案2
+     * @param Request $request
+     * @return string
+     */
     public function programme2(Request $request)
     {
         if ($request->isPost()){
             //表单 验证
             $form = $request->param();
-            if (empty($form['url']) || empty($form['time'])) $this->error('表单数据未填写完整,请重新填写');
+            if (empty($form['url']) || empty($form['time']) || empty($form['cate'])) $this->error('表单数据未填写完整,请重新填写');
         
             $time = is_numeric($form['time']) ? $form['time'] : 40;   //初始化分词数
             $url  = $form['url'];
+            $cate = $form['cate'];
             if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+            
+            switch ($cate)
+            {
+                case 1:
+                    $cate = '.txt';
+                    break;
+                case 2:
+                    $cate = '.doc';
+                    break;
+                case 3:
+                    $cate = '.xlsx';
+                    break;
+                default :
+                    $cate = '.txt';
+                    break;
+            }
             
             //分析
             $devid    = $this->analysisWeb($url, $time);
@@ -50,7 +72,7 @@ class Index extends Common
                 $txt_data[] = [$_v['word'], $_v['times'], $_v['weight']];
             }
             
-            $this->dlfileftxt($txt_data, 'ferre_'.time()); //https://blog.csdn.net/oQiWei1/article/details/62432315
+            $this->dlfileftxt($txt_data, 'ferre_'.time(), $cate); //https://blog.csdn.net/oQiWei1/article/details/62432315
             
             return $this->view->fetch('program2-end');
         }
@@ -63,10 +85,10 @@ class Index extends Common
      * @param array $data
      * @param string $filename
      */
-    public function dlfileftxt($data = array(),$filename = "unknown") {
+    public function dlfileftxt($data = array(),$filename = "unknown", $cate) {
         header("Content-type:application/octet-stream");
         header("Accept-Ranges:bytes");
-        header("Content-Disposition:attachment;filename=$filename.txt");
+        header("Content-Disposition:attachment;filename=$filename.$cate");
         header("Expires:0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0 ");
         header("Pragma:public");
