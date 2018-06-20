@@ -3,6 +3,7 @@ namespace app\analysis;
 
 use think\Controller;
 use QL\QueryList;
+use wxkxklmyt\Scws;
 
 //公共方法类
 class Common extends Controller
@@ -47,4 +48,44 @@ class Common extends Controller
         curl_close($ch);
         return $result;
     }
+    
+    /**
+     * 得到分词数据
+     * @param unknown $url
+     * @param unknown $time
+     * @return string
+     */
+    public function analysisWeb($url, $time)
+    {
+        $article = $this->getWebData($url);
+        $scws = new Scws();
+        return $scws->scws($article, $time, true);
+    }
+    
+    /**
+     * 表单去空/去空
+     * @param unknown $form
+     */
+    public function formEmptyCheck(&$form)
+    {
+        //arr
+        if (is_array($form)){
+            foreach ($form as $key => $val){
+                empty($val) ? $this->error('表单数据未填写完整,请重新填写') : $form[$key] = trim($val);
+            }
+            return;
+        }
+        //str
+        empty($form) ? $this->error('表单数据未填写完整,请重新填写') : $form = trim($form);
+    }
+    
+    /**
+     * url check
+     * @param unknown $url
+     */
+    public function urlFormatCheck($url)
+    {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) $this->error('不是标准的地址');
+    }
+    
 }
