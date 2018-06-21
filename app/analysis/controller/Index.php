@@ -93,7 +93,7 @@ class Index extends Common
         //颜色处理/文字间距 TODO
         $color_bg   = explode(',', $bg_color);
         $color_text = explode(',', $text_color);
-        
+//         halt($words);die;
         // 定义输出为图像类型
         header("content-type:image/$ext");
         
@@ -112,13 +112,14 @@ class Index extends Common
         //UTF-8编码，不需要转换
         //$motto = iconv("gb2312", "utf-8", $motto);
         //image resource,float size,float angle,int x,int y,int color,string fontfile,string text
-        $x_drift = 80;
-        $y_drift = 100;
-        foreach ($words as $_k => $_v){
-            imageTTFText($im, 18, 0, $x_drift, 100, $text_color, $font_path, $_v);
-            $x_drift = $x_drift + ($_k)*20;
-        }
-    
+        $string = implode(" ", $words);
+        $x_drift = 10;
+        $y_drift = 50;
+        $content = $this->autowrap($font_size, 0, $font_path, $string, $pic_width);
+        
+        //字体大小 x轴 y轴 分词间隙   TODO
+        imageTTFText($im, 18, 0, $x_drift, $y_drift, $text_color, $font_path, $content);
+        
         switch ($ext)
         {
             case 'jpg' || 'jpeg':
@@ -132,6 +133,27 @@ class Index extends Common
         }
         
         imagedestroy($im);die;
+    }
+    
+    public function autowrap($fontsize, $angle, $fontface, $string, $width) {
+    // 这几个变量分别是 字体大小, 角度, 字体名称, 字符串, 预设宽度
+     $content = "";
+    
+     // 将字符串拆分成一个个单字 保存到数组 letter 中
+     for ($i=0;$i<mb_strlen($string);$i++) {
+      $letter[] = mb_substr($string, $i, 1);
+     }
+    
+     foreach ($letter as $l) {
+      $teststr = $content." ".$l;
+      $testbox = imagettfbbox($fontsize, $angle, $fontface, $teststr);
+      // 判断拼接后的字符串是否超过预设的宽度
+      if (($testbox[2] > $width) && ($content !== "")) {
+       $content .= "\n";
+      }
+      $content .= $l;
+     }
+     return $content;
     }
     
     /**
