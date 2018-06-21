@@ -28,6 +28,7 @@ class Index extends Common
         if ($request->isPost()){
             //表单 验证
             $form = $request->param();
+            halt($form);
             $this->formEmptyCheck($form);
             
             //数据初始化
