@@ -6,6 +6,9 @@ use think\Request;
 
 class Index extends Common
 {
+    public $font_dir   = 'F:'.DS.'xampp'.DS.'htdocs'.DS.'Claire'.DS.'public'.DS.'font'.DS.'';
+    public $img_format = ['jpg', 'jpeg', 'png', 'gif'];
+    
     /**
      * index page
      */
@@ -28,17 +31,46 @@ class Index extends Common
         if ($request->isPost()){
             //表单 验证
             $form = $request->param();
-            halt($form);
             $this->formEmptyCheck($form);
+            $this->urlFormatCheck($form['url']);
+            
+            switch ($form['ext'])
+            {
+                case 1:
+                    $ext = 'jpg';
+                    break;
+                case 2:
+                    $ext = 'png';
+                    break;
+                case 3:
+                    $ext = 'gif';
+                    break;
+                default:
+                    $ext = 'jpg';
+                    break;
+            }
+            
+            if ($form['font_size'] > 50) $form['font_size'] = 50;
+            if ($form['font_size'] < 18) $form['font_size'] = 18;
+            if ($form['pic_width'] > 1920 || $form['pic_width'] < 100) $form['pic_width']    = 600;
+            if ($form['pic_height'] > 1920 || $form['pic_height'] < 100) $form['pic_height'] = 400;
+            
+            $time      = is_numeric($form['time']) ? $form['time'] : 40;
+            $font_path = $this->font_dir.$form['font_style'];
+            if (!file_exists($font_path)) $this->error('该字体不存在');
+            if (!in_array($ext, $this->img_format)) $this->error('抱歉，不支持的图片格式');
+            
+            
+            halt($form);
+            $this->picHandle($ext, $font_path, $form['font_size'], $form['pic_width'], $form['height'], $form['bg_color'], $form['text_color']);
             
             //数据初始化
-            $time = is_numeric($form['time']) ? $form['time'] : 40;
-            $url  = $form['url'];
-            $this->urlFormatCheck($url);
+            $this->urlFormatCheck($form['url']);
     
             //分析
-            $devid   = $this->analysisWeb($url, $time);
+            $devid   = $this->analysisWeb($form['url'], $time);
             $count   = count($devid);
+            
             $string  = '';
             foreach ($devid as $_k => $_v){
                 for ($i = 0; $i < $count; $i ++){
@@ -51,6 +83,48 @@ class Index extends Common
         }
     
         return $this->view->fetch('program1');
+    }
+    
+    //function: 1、提取生成词频前n个(var:词汇),使用GD库生成标签云;TIPS:图片大小；图片背景；文字大小；文字颜色(不统一)；文字字体；文字间距
+    public function picHandle($ext, $font_path, $font_size, $pic_width, $pic_height, $bg_color, $text_color)
+    {
+        //颜色处理/文字间距 TODO
+    
+        // 定义输出为图像类型
+        header("content-type:image/$ext");
+    
+        // 创建画布,默认600x400
+        $im = imagecreate(600, 400);
+        // 背景,默认白色
+        imagecolorallocate($im, 255, 255, 255);
+    
+        // 文本颜色
+        $text_color = imagecolorallocate($im, 233, 14, 91);
+        $motto = "asd";
+        //imagestring 默认英文编码，只支持UTF-8
+        //imagestring($im, 2, 0, 0, $motto, $text_color);
+    
+        //当代码文件为:
+        //ANSI编码，需要转换
+        //UTF-8编码，不需要转换
+        //$motto = iconv("gb2312", "utf-8", $motto);
+        //image resource,float size,float angle,int x,int y,int color,string fontfile,string text
+        imageTTFText($im, 18, 0, 80, 100, $text_color, $font_path, $motto);
+        imageTTFText($im, 40, 0, 10, 140, $text_color, $font_path, 'I LOVE ALEXA');
+    
+        switch ($ext)
+        {
+            case 'jpg' || 'jpeg':
+                imagejpeg($im);
+            case 'png':
+                imagepng($im);
+            case 'gif':
+                imagegif($im);
+            default:
+                imagejpeg($im);
+        }
+    
+        imagedestroy($im);die;
     }
     
     /**
@@ -138,56 +212,7 @@ class Index extends Common
         return $this->view->fetch('program3');
     }
     
-    //function: 1、提取生成词频前n个(var:词汇),使用GD库生成标签云;TIPS:图片大小；图片背景；文字大小；文字颜色(不统一)；文字字体；文字间距
-    public function pic()
-    {
-        //表单数据提取
-        $img_format = ['jpg', 'jpeg', 'png', 'gif'];
-        $ext        = 'jpg';
-        $font_size  = 50;    //最大的font size,最小的为18
-        $font_sty   = "C:\Users\Administrator\Downloads\Austie Bost Versailles.ttf";
-        
-        //表单验证 TODO
-        if (!in_array($ext, $img_format)) $this->error('抱歉，不支持的图片格式');
-        
-        //颜色处理/文字间距 TODO
-        
-        // 定义输出为图像类型
-        header("content-type:image/$ext");
-        
-        // 创建画布,默认600x400
-        $im = imagecreate(600, 400);
-        // 背景,默认白色
-        imagecolorallocate($im, 255, 255, 255);
-        
-        // 文本颜色
-        $text_color = imagecolorallocate($im, 233, 14, 91);
-        $motto = "asd";
-        //imagestring 默认英文编码，只支持UTF-8
-        //imagestring($im, 2, 0, 0, $motto, $text_color);
-        
-        //当代码文件为:
-        //ANSI编码，需要转换
-        //UTF-8编码，不需要转换
-        //$motto = iconv("gb2312", "utf-8", $motto);
-        //image resource,float size,float angle,int x,int y,int color,string fontfile,string text
-        imageTTFText($im, 18, 0, 80, 100, $text_color, $font_sty, $motto);
-        imageTTFText($im, 40, 0, 10, 140, $text_color, $font_sty, 'I LOVE ALEXA');
-        
-        switch ($ext)
-        {
-            case 'jpg' || 'jpeg':
-                imagejpeg($im);
-            case 'png':
-                imagepng($im);
-            case 'gif':
-                imagegif($im);
-            default:
-                imagejpeg($im);
-        }
-        
-        imagedestroy($im);die;
-    }
+
     
     /**
      * 生成txt权重文档

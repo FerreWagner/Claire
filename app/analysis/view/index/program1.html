@@ -53,11 +53,11 @@
 						        <input type="radio" name="ext" value="3"> Gif
 						    </label>	
    						<div class="input-group" style="margin-top: 20px;">
-							<input type="text" placeholder="字体大小" name="font" required=""> px
+							<input type="text" placeholder="字体大小" name="font_size" required=""> px
 						</div>
    						<div class="input-group" style="margin-top: 20px;">
 							标签云长：<input type="text" name="pic_width" required="" style="width: 200px;"> px
-							<snap style="margin-left: 100px;">标签云宽：</snap><input type="text" name="pic_heght" required="" style="width: 200px;"> px
+							<snap style="margin-left: 100px;">标签云宽：</snap><input type="text" name="pic_height" required="" style="width: 200px;"> px
 						</div>
    						<div class="input-group" style="margin-top: 20px;">
    						
@@ -87,6 +87,18 @@
 							</script>
 							
 						</div>
+						
+						<div class="select-group" style="margin-top: 10px;">
+							字体：
+							<select style="width: 300px;height: 30px;" name="font_style">
+								<optgroup label="中文字体">  
+								  <option value ="cn_goth.ttf">哥特</option>
+							   </optgroup>
+								<optgroup label="英文字体">  
+								  <option value ="en_YoungFolks.ttf">俏皮YoungFolks</option>
+							   </optgroup>
+							</select>
+   						</div>
    						
 						<button class="btn btn-danger btn-block" type="submit">开始分析</button >                
 					</form>
