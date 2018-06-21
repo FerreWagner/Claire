@@ -60,15 +60,17 @@ class Index extends Common
             if (!file_exists($font_path)) $this->error('该字体不存在');
             if (!in_array($ext, $this->img_format)) $this->error('抱歉，不支持的图片格式');
             
-            
-            halt($form);
-            $this->picHandle($ext, $font_path, $form['font_size'], $form['pic_width'], $form['height'], $form['bg_color'], $form['text_color']);
-            
-            //数据初始化
-            $this->urlFormatCheck($form['url']);
-    
             //分析
             $devid   = $this->analysisWeb($form['url'], $time);
+            $words   = [];
+            foreach ($devid as $value){
+                $words[] = $value['word'];
+            }
+            
+            //处理画布
+            $this->picHandle($ext, $font_path, $form['font_size'], $form['pic_width'], $form['pic_height'], $form['bg_color'], $form['text_color'], $words);
+            
+            
             $count   = count($devid);
             
             $string  = '';
@@ -86,31 +88,36 @@ class Index extends Common
     }
     
     //function: 1、提取生成词频前n个(var:词汇),使用GD库生成标签云;TIPS:图片大小；图片背景；文字大小；文字颜色(不统一)；文字字体；文字间距
-    public function picHandle($ext, $font_path, $font_size, $pic_width, $pic_height, $bg_color, $text_color)
+    public function picHandle($ext, $font_path, $font_size, $pic_width, $pic_height, $bg_color, $text_color, $words)
     {
         //颜色处理/文字间距 TODO
-    
+        $color_bg   = explode(',', $bg_color);
+        $color_text = explode(',', $text_color);
+        
         // 定义输出为图像类型
         header("content-type:image/$ext");
-    
-        // 创建画布,默认600x400
-        $im = imagecreate(600, 400);
-        // 背景,默认白色
-        imagecolorallocate($im, 255, 255, 255);
-    
+        
+        // 创建定长宽画布
+        $im = imagecreate($pic_width, $pic_height);
+        
+        // 背景
+        imagecolorallocate($im, $color_bg[0], $color_bg[1], $color_bg[2]);
         // 文本颜色
-        $text_color = imagecolorallocate($im, 233, 14, 91);
-        $motto = "asd";
+        $text_color = imagecolorallocate($im, $color_text[0], $color_text[1], $color_text[2]);
         //imagestring 默认英文编码，只支持UTF-8
         //imagestring($im, 2, 0, 0, $motto, $text_color);
-    
+        
         //当代码文件为:
         //ANSI编码，需要转换
         //UTF-8编码，不需要转换
         //$motto = iconv("gb2312", "utf-8", $motto);
         //image resource,float size,float angle,int x,int y,int color,string fontfile,string text
-        imageTTFText($im, 18, 0, 80, 100, $text_color, $font_path, $motto);
-        imageTTFText($im, 40, 0, 10, 140, $text_color, $font_path, 'I LOVE ALEXA');
+        $x_drift = 80;
+        $y_drift = 100;
+        foreach ($words as $_k => $_v){
+            imageTTFText($im, 18, 0, $x_drift, 100, $text_color, $font_path, $_v);
+            $x_drift = $x_drift + ($_k)*20;
+        }
     
         switch ($ext)
         {
@@ -123,7 +130,7 @@ class Index extends Common
             default:
                 imagejpeg($im);
         }
-    
+        
         imagedestroy($im);die;
     }
     
