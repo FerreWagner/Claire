@@ -112,13 +112,13 @@ class Index extends Common
         //UTF-8编码，不需要转换
         //$motto = iconv("gb2312", "utf-8", $motto);
         //image resource,float size,float angle,int x,int y,int color,string fontfile,string text
-        $string = implode(" ", $words);
-        $x_drift = 10;
+        $string  = implode(" ", $words);
+        $x_drift = 25;
         $y_drift = 50;
         $content = $this->autowrap($font_size, 0, $font_path, $string, $pic_width);
         
         //字体大小 x轴 y轴 分词间隙   TODO
-        imageTTFText($im, 18, 0, $x_drift, $y_drift, $text_color, $font_path, $content);
+        imageTTFText($im, $font_size, 0, $x_drift, $y_drift, $text_color, $font_path, $content);
         
         switch ($ext)
         {
