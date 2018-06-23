@@ -642,17 +642,17 @@ ul.callbacks_tabs li {
     position: relative;
 }
 .agileits-banner1{
-	background: url(../images/b8.jpg) no-repeat 0px 0px;
+	background: url(../images/logo_01.jpg) no-repeat 0px 0px;
     background-size: cover;
     padding: 20.1em 0;
 }
 .agileits-banner2{
-	background: url(../images/banner1.jpg) no-repeat 0px 0px;
+	background: url(../images/logo_01.jpg) no-repeat 0px 0px;
     background-size: cover;
     padding: 20.1em 0;
 }
 .agileits-banner3{
-	background:url(../images/banner2.jpg) no-repeat 0px 0px;
+	background:url(../images/logo_01.jpg) no-repeat 0px 0px;
   background-size:cover;
   padding: 20.1em 0;
 }
@@ -716,14 +716,14 @@ h4.title2-w3ls {
 }
 .layer a {
   padding: 4px 0;
-  color: #3498db;
+  color: #fff;
   border-radius: 5px;
   font-size: 14px;
   letter-spacing: 1px;
   width: 8%;
   line-height: 2;
   margin: 25px auto;
-  background: #fff;
+  background: #477369;
   text-transform: uppercase;
   display: block;
 }
@@ -745,7 +745,7 @@ h4.title2-w3ls {
 
 }
 .about-w3ls {
-  background: url(../images/about.jpg) no-repeat center;
+  background: url(../images/logo_03.jpg) no-repeat center;
   background-size: cover;
 }
 
