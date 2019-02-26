@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{$sys.title}-{$data['title']}</title>
+    <meta name="description" content="{$sys.desc}">
+    <meta name="keywords" content="{$sys.keywords}">
+    
+    {include file='public_css' /}
+
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.min.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+  <!-- START: header -->
+  {include file='public_header' /}
+  <!-- END: header -->
+  
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 mb40 text-center">
+	          <h2>
+		          <span style="font-size: 14px;margin-right: 30px;"><a href="{:url('index/single', ['id' => $prev['id']])}">上一页</a></span>
+		          	{$data['title']}
+		          <span style="font-size: 14px;margin-left: 30px;"><a href="{:url('index/single', ['id' => $next['id']])}">下一页</a></span>
+	          </h2>
+          <p>{$data['time']|date="Y/m/d",###}</p>
+        </div>
+        <div style="text-align: center">
+          <a href="{:url('index/single', ['id' => $next['id']])}"><img src="{$data['thumb']}-1664" /></a>
+        </div>
+      </div>
+
+      </div>
+      
+    </div>
+  </div>
+
+  {include file='public_footer' /}
+
+  
+  
+
+{include file='public_js' /}
+
+  </body>
+</html>

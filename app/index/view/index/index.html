@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{$sys.title}</title>
+    <meta name="description" content="{$sys.desc}">
+    <meta name="keywords" content="{$sys.keywords}">
+    <meta name="baidu-site-verification" content="7KbrbzjFYI" />
+    {include file='public_css' /}
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.min.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+  <!-- START: header -->
+  {include file='public_header' /}
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 mb40">
+          <h2>I'm a photographer</h2>
+			Welcome to Claire.<br />Welcome to the sponsorship of the contact column.<br />
+        </div>
+      </div>
+
+
+	  {volist name="result" id="result_pic"}
+	  
+  		{if $i == 1 || $i == 2}
+  			{if $i == 1}
+  				<div class="row probootstrap-gutter16">
+			        <div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+			            <div class="probootstrap-photo-details">
+			              <h2>{$result_pic['title']}</h2>
+			              <p>浏览：{$result_pic['see']}</p>
+			            </div>
+			          </a>
+			        </div>
+  			{/if}
+  			{if $i == 2}
+		  			<div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+			            <div class="probootstrap-photo-details">
+							<h2>{$result_pic['title']}</h2>
+							<p>浏览：{$result_pic['see']}</p>
+			            </div>
+			          </a>
+			        </div>
+	      		</div>
+  			{/if}
+  		{elseif $i == 3 || $i == 4 || $i == 5 /}
+	  		{if $i == 3}
+  				<div class="row probootstrap-gutter16">
+			        <div class="col-md-5 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+			            <div class="probootstrap-photo-details">
+							<h2>{$result_pic['title']}</h2>
+							<p>浏览：{$result_pic['see']}</p>
+			            </div>
+			          </a>
+			        </div>
+  			{/if}
+  			{if $i == 4}
+  				<div class="col-md-3 probootstrap-animate" data-animate-effect="fadeIn">
+		          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+		            <div class="probootstrap-photo-details">
+						<h2>{$result_pic['title']}</h2>
+						<p>浏览：{$result_pic['see']}</p>
+		            </div>
+		          </a>
+		        </div>
+  			{/if}
+  			{if $i == 5}
+	  			<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+		          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+		            <div class="probootstrap-photo-details">
+						<h2>{$result_pic['title']}</h2>
+						<p>浏览：{$result_pic['see']}</p>
+		            </div>
+		          </a>
+		        </div>
+		      </div>
+  			{/if}
+  		{elseif $i == 6 || $i == 7 /}
+  			{if $i == 6}
+	  			<div class="row probootstrap-gutter16">
+			        <div class="col-md-8 probootstrap-animate" data-animate-effect="fadeIn">
+			          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+			            <div class="probootstrap-photo-details">
+							<h2>{$result_pic['title']}</h2>
+							<p>浏览：{$result_pic['see']}</p>
+			            </div>
+			          </a>
+			        </div>
+  			{/if}
+  			{if $i == 7}
+	  			<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+		          <a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+		            <div class="probootstrap-photo-details">
+						<h2>{$result_pic['title']}</h2>
+						<p>浏览：{$result_pic['see']}</p>
+		            </div>
+		          </a>
+		        </div>
+		      </div>
+  			{/if}
+  		{else /}
+			{if $i == 8}
+				<div class="row probootstrap-gutter16">
+					<div class="col-md-5 probootstrap-animate" data-animate-effect="fadeIn">
+						<a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+							<div class="probootstrap-photo-details">
+								<h2>{$result_pic['title']}</h2>
+								<p>浏览：{$result_pic['see']}</p>
+							</div>
+						</a>
+					</div>
+			{/if}
+			{if $i == 9}
+					<div class="col-md-3 probootstrap-animate" data-animate-effect="fadeIn">
+						<a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+							<div class="probootstrap-photo-details">
+								<h2>{$result_pic['title']}</h2>
+								<p>浏览：{$result_pic['see']}</p>
+							</div>
+						</a>
+					</div>
+			{/if}
+			{if $i == 10}
+					<div class="col-md-4 probootstrap-animate" data-animate-effect="fadeIn">
+						<a href="{:url('index/single', ['id' => $result_pic['id']])}" class="img-bg" style="background-image: url({$result_pic['thumb']}-1664);">
+							<div class="probootstrap-photo-details">
+								<h2>{$result_pic['title']}</h2>
+								<p>浏览：{$result_pic['see']}</p>
+							</div>
+						</a>
+					</div>
+				</div>
+			{/if}
+		{/if}
+	  {/volist}
+
+      {$result->render()}
+    </div>
+  </div>
+
+  {include file='public_footer' /}
+
+  {include file='public_js' /}
+
+  </body>
+</html>

@@ -1,0 +1,134 @@
+{include file='public/header' /}
+<script src="__STATIC__/ueditor/ueditor.config.js"></script>
+<script src="__STATIC__/ueditor/ueditor.all.min.js"></script>
+<script src="__STATIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<body>
+        <div class="x-body">
+            <form class="layui-form layui-form-pane" id="aform" action="{:url('admin/article/doCrawl')}" method="post">
+                <div class="layui-form-item">
+                    <label for="url" class="layui-form-label">
+                        采集地址
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="text" name="url" value="" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+<!--                 <div class="layui-form-item">
+                    <label for="title" class="layui-form-label">
+                        标题
+                    </label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="title" value="tag" title="标签库">
+                        <input type="radio" name="title" value="default" title="默认" checked>
+                    </div>
+                </div> -->
+
+                <div class="layui-form-item">
+                    <label for="deep" class="layui-form-label">
+                        <span class="x-red">*</span>采集深度
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="number" id="deep" name="deep" required="" lay-verify="required" autocomplete="off" value="2" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label for="order" class="layui-form-label">
+                        <span class="x-red">*</span>排序
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="number" id="order" name="order" required="" lay-verify="required" autocomplete="off" value="5" class="layui-input">
+                    </div>
+                </div>
+                
+                <!-- <div class="layui-form-item">
+                    <label for="number" class="layui-form-label">
+                        <span class="x-red">*</span>采集数量
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="number" id="number" name="number" required="" lay-verify="required" autocomplete="off" value="400" class="layui-input">
+                    </div>
+                </div> -->
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">
+                            所在类别
+                        </label>
+                        <div class="layui-input-block">
+                            <select lay-verify="required" name="cate">
+                                <option>
+                                </option>
+                                <optgroup label="分类管理">
+                                {volist name="cate" id="ca"}
+                                	<option value="{$ca.id}" {if condition="$ca['catename'] eq 'Alexa'"}selected=""{/if}>{$ca.catename}</option>
+                                {/volist}
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <input class="layui-btn" type="submit" value="爬取数据" lay-filter="add" lay-submit>
+                       
+                </div>
+                {:token()}
+            </form>
+        </div>
+        {include file='public/base_js' /}
+        
+		<script type="text/javascript">  
+		    function doUpload() {    
+		        var form = document.getElementById("aform");
+		        var fd = new FormData(form);
+		        $.ajax({    
+		          url: "{:url('article/upload')}" ,
+		          type: 'POST',    
+		          data: fd, 
+		          async: false,    
+		          cache: false,    
+		          contentType: false,    
+		          processData: false,    
+		          success: function (response,status,xhr) {
+		        	  layer.msg('上传成功', {icon: 6});
+		        	  console.log(xhr);
+		       	  },    
+		          error: function (returndata) {
+		        	  layer.msg('上传失败', {icon: 5});
+		        	  console.log(returndata);
+
+		        	  //原来的处理方式
+		              //alert(returndata);    
+		          }    
+		      });    
+			}    
+		</script>  
+
+        <script>
+            layui.use(['form','layer','layedit'], function(){
+                $ = layui.jquery;
+              var form = layui.form()
+              ,layer = layui.layer
+              ,layedit = layui.layedit;
+
+
+                layedit.set({
+                  uploadImage: {
+                    url: "./upimg.json" //接口url
+                    ,type: 'post' //默认post
+                  }
+                })
+  
+            });
+        </script>
+        <script type="text/javascript">
+
+            //实例化编辑器
+            //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+            UE.getEditor('content',{initialFrameWidth:1000,initialFrameHeight:300,});
+        </script>
+    </body>
+
+</html>
